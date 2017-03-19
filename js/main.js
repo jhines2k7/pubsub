@@ -1,21 +1,29 @@
-var EventBus = {
-  topics: {},
-  store: [],
-  subscribe: function(topic, listener) {
-    // create the topic if not yet created
-    if(!this.topics[topic]) this.topics[topic] = [];
+import EventBus from './eventbus';
 
-    // add the listener
-    this.topics[topic].push(listener);
-  },
+class Mailer {
+	constructor(eventBus) {
+    this._eventBus = eventBus;
+    this._eventBus.subscribe('order/new', this.sendPurchaseEmail);  
+  }
 
-  publish: function(topic, data) {
-    // return if the topic doesn't exist, or there are no listeners
-    if(!this.topics[topic] || this.topics[topic].length < 1) return;
+  sendPurchaseEmail(userEmail) {
+    console.log("Sent email to " + userEmail);
+  }  
+}
 
-    // send the event to all listeners
-    this.topics[topic].forEach(function(listener) {
-      listener(data || {});
-    });
+class Order {
+  constructor(params, eventBus) {
+    this._eventBus = eventBus;
+    this._params = params;
+  }  
+
+  saveOrder() {
+    this._eventBus.publish('order/new', this._params.userEmail);
   }
 };
+
+let eventBus = new EventBus();
+
+let mailer = new Mailer(eventBus);
+let order = new Order({userEmail: 'casey@gmail.com'}, eventBus);
+order.saveOrder();
