@@ -1,4 +1,4 @@
-export default class EventBus {
+class EventBus {
   constructor() {
     this._topics = {};
     this._eventStore = [];
@@ -21,4 +21,14 @@ export default class EventBus {
       listener(data || {});
     });
   }
+
+  addEventToStore(event) {
+    this._eventStore.push(event);
+  }
+
+  getEventStore() {
+    return this._eventStore;
+  }
 }
+
+module.exports = EventBus;
