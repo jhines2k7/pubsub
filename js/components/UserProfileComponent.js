@@ -23,11 +23,13 @@ export default class UserProfileComponent {
 		// userId, userName, firstName, lastName, email
 		//let container = document.getElementById('app');
 
-		var vnode = h(this._container, [
+		/*var vnode = h(this._container, [
 		  h('span', {style: {fontWeight: 'bold'}}, reducedState.userName),
 		  reducedState.firstName,
 		  h('a', {props: {href: '/foo'}}, reducedState.lastName)
-		]);
+		]);*/
+
+		let vnode = h('div', {style: {fontWeight: 'bold'}}, reducedState.userName);
 
 		patch(this._container, vnode);
 	}
