@@ -1,8 +1,9 @@
 var path = require('path');
 var webpack = require('webpack');
+var glob = require("glob");
 
 module.exports = {
-    entry: './js/main.js',
+    entry: glob.sync("./js/*.js"),
     output: {
         path: path.resolve(__dirname, 'build'),
         filename: 'app.js'
