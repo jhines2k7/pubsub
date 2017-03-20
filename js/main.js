@@ -15,7 +15,7 @@ Pass the event bus object to the component constructor
 class UserProfileComponent {
 	constructor(eventBus, container) {
 		this._eventBus = eventBus;
-		this._eventBus.subscribe('profile/update', this._updateUserProfile);
+		this._eventBus.subscribe('profile/update', this.updateUserProfile);
 		this._container = container;		
 	}
 
@@ -23,7 +23,7 @@ class UserProfileComponent {
 		return (event) => {
 			return event.userId == id && event.componentName === 'userProfile';
 		}			
-	}
+	}.bind(this)
 
 	replay(events) {
 		return {  	
@@ -32,12 +32,12 @@ class UserProfileComponent {
 		    lastName: 'Hines',
 		    email: 'jameshines10@gmail.com'  
 	  	};
-	}
+	}.bind(this)
 
 	updateUserProfile(id) {
-		let events = this._eventBus.getEventStore().filter(this._isOrderEvent(id))
+		let events = this._eventBus.getEventStore().filter(this.isOrderEvent(id))
 
-		let reducedState = this._replay(events);
+		let reducedState = this.replay(events);
 
 		// userId, userName, firstName, lastName, email
 		//let container = document.getElementById('app');
@@ -49,10 +49,14 @@ class UserProfileComponent {
 		]);
 
 		patch(container, vnode);
-	}
+	}.bind(this)
 }
 
 class ButtonComponent {
+	constructor(eventBus) {
+		this._eventBus = eventBus;
+	}
+
 	updateUserProfile(event) {
 		this._eventBus.publish('profile/update', event.userId);
 		this._eventBus.addEventToStore(event);
@@ -70,7 +74,7 @@ let jamesComponent = new UserProfileComponent(eventBus, container)
 container = document.getElementById('tab');
 let tabComponent = new UserProfileComponent(eventBus, container)
 
-let button = new ButtonComponent();
+let button = new ButtonComponent(eventBus);
 
 let profileEvent = {
   type: 'UPDATE_PROFILE',
