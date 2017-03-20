@@ -9,11 +9,11 @@ Pass the event bus object to the component constructor
 
 let eventBus = new EventBus();
 
+container = document.getElementById('james');
+let jamesComponent = new UserProfileComponent(eventBus, container);
+
 let container = document.getElementById('casey');
 let caseyComponent = new UserProfileComponent(eventBus, container)
-
-container = document.getElementById('james');
-let jamesComponent = new UserProfileComponent(eventBus, container)
 
 /*container = document.getElementById('tab');
 let tabComponent = new UserProfileComponent(eventBus, container)*/
@@ -33,9 +33,7 @@ let profileEvent = {
   }
 }
 
-console.log('Update profile event sent to james component');
 button.updateUserProfile(profileEvent);
-console.log('Event store', eventBus.getEventStore());
 
 profileEvent = {
   type: 'UPDATE_PROFILE',
@@ -50,10 +48,9 @@ profileEvent = {
   }
 }
 
-console.log('Update profile event sent to casey component');
 button.updateUserProfile(profileEvent);
-//console.log('Event store', eventBus.getEventStore());
 
+/*
 profileEvent = {
   type: 'UPDATE_PROFILE',
   componentName: 'userProfile',
@@ -67,6 +64,19 @@ profileEvent = {
   }
 }
 
-console.log('Update profile event sent to james component');
 button.updateUserProfile(profileEvent);
-//console.log('Event store', eventBus.getEventStore());
+
+profileEvent = {
+  type: 'UPDATE_PROFILE',
+  componentName: 'userProfile',
+  eventId: 4,
+  userId: 1,
+  payload: {  	
+    userName: 'jimmy',
+    firstName: 'JimJam',
+    lastName: 'Hines',
+    email: 'jimmmyhines10@gmail.com'  
+  }
+}
+
+button.updateUserProfile(profileEvent);*/
