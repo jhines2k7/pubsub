@@ -9,14 +9,11 @@ Pass the event bus object to the component constructor
 
 let eventBus = new EventBus();
 
-container = document.getElementById('james');
-let jamesComponent = new UserProfileComponent(eventBus, container);
-
 let container = document.getElementById('casey');
 let caseyComponent = new UserProfileComponent(eventBus, container)
 
-/*container = document.getElementById('tab');
-let tabComponent = new UserProfileComponent(eventBus, container)*/
+container = document.getElementById('james');
+let jamesComponent = new UserProfileComponent(eventBus, container);
 
 let button = new ButtonComponent(eventBus);
 
@@ -33,50 +30,9 @@ let profileEvent = {
   }
 }
 
-button.updateUserProfile(profileEvent);
+caseyComponent.render('Casey');
+jamesComponent.render('James');
 
-profileEvent = {
-  type: 'UPDATE_PROFILE',
-  componentName: 'userProfile',
-  eventId: 2,
-  userId: 2,
-  payload: {  	
-    userName: 'casey',
-    firstName: 'Casey',
-    lastName: 'McCarty',
-    email: 'casey@gmail.com'  
-  }
-}
-
-button.updateUserProfile(profileEvent);
-
-/*
-profileEvent = {
-  type: 'UPDATE_PROFILE',
-  componentName: 'userProfile',
-  eventId: 3,
-  userId: 1,
-  payload: {  	
-    userName: 'james',
-    firstName: 'Jim',
-    lastName: 'Hines',
-    email: 'jimhines10@gmail.com'  
-  }
-}
-
-button.updateUserProfile(profileEvent);
-
-profileEvent = {
-  type: 'UPDATE_PROFILE',
-  componentName: 'userProfile',
-  eventId: 4,
-  userId: 1,
-  payload: {  	
-    userName: 'jimmy',
-    firstName: 'JimJam',
-    lastName: 'Hines',
-    email: 'jimmmyhines10@gmail.com'  
-  }
-}
-
-button.updateUserProfile(profileEvent);*/
+setTimeout(function(){ 
+	caseyComponent.render('Casey McCarty');
+}, 3000);
