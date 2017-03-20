@@ -52,7 +52,7 @@ profileEvent = {
 
 console.log('Update profile event sent to casey component');
 button.updateUserProfile(profileEvent);
-console.log('Event store', eventBus.getEventStore());
+//console.log('Event store', eventBus.getEventStore());
 
 profileEvent = {
   type: 'UPDATE_PROFILE',
@@ -69,4 +69,4 @@ profileEvent = {
 
 console.log('Update profile event sent to james component');
 button.updateUserProfile(profileEvent);
-console.log('Event store', eventBus.getEventStore());
+//console.log('Event store', eventBus.getEventStore());
