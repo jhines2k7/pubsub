@@ -2,6 +2,7 @@ class EventBus {
   constructor() {
     this._topics = {};
     this._eventStore = [];
+    this._eventId = 0;
   }
   
   subscribe (topic, listener) {
@@ -23,6 +24,7 @@ class EventBus {
   }
 
   addEventToStore(event) {
+    this._eventId++;
     this._eventStore.push(event);
   }
 
