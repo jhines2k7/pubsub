@@ -23,7 +23,7 @@ class UserProfileComponent {
 		return (event) => {
 			return event.userId == id && event.componentName === 'userProfile';
 		}			
-	}.bind(this)
+	}
 
 	replay(events) {
 		return {  	
@@ -32,7 +32,7 @@ class UserProfileComponent {
 		    lastName: 'Hines',
 		    email: 'jameshines10@gmail.com'  
 	  	};
-	}.bind(this)
+	}
 
 	updateUserProfile(id) {
 		let events = this._eventBus.getEventStore().filter(this.isOrderEvent(id))
@@ -49,7 +49,7 @@ class UserProfileComponent {
 		]);
 
 		patch(container, vnode);
-	}.bind(this)
+	}
 }
 
 class ButtonComponent {
