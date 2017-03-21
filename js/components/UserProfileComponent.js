@@ -47,18 +47,31 @@ function replay(events) {
   	};*/
 }
 
+// takes in a state object and returns a vnode
+function view(state) {
+	return h('div', state);
+}
+
+//var oldVnode = document.getElementById('placeholder');
+function updateDOM(newVnode) {
+	this._container = patch(this._container, newVnode);
+}
+
 export default class UserProfileComponent {
-	constructor(eventBus, container) {
-		this._eventBus = eventBus;		
+	constructor(container) {
+		//this._eventBus = eventBus;		
 		this._container = container;		
 	}
 
 	subscribe(topic, callback) {
-		this._eventBus.subscribe(topic, updateUserProfile.bind(this));
+		//this._eventBus.subscribe(topic, updateUserProfile.bind(this));
 	}
 
-	render(name) {
-		this._vnode = h('div', {style: {fontWeight: 'bold'}}, name);
-		this._vnode = patch(this._container, vnode);
+	render(state) {
+		//oldVnode = this._container;
+
+		const newVnode = view(state);
+		//updateDOM.bind(this, newVnode);		
+		this._container = patch(this._container, newVnode);
 	}
 }
