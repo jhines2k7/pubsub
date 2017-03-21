@@ -122,7 +122,7 @@ setTimeout( () => {
 	    data: 'casey weber mccarty'
 	}
 	button.publish(event);
-	caseyComponent.render();  
+	caseyComponent.render();
 
 	event = {
 	    channel: "userProfile",
@@ -133,5 +133,4 @@ setTimeout( () => {
 	}
 	button.publish(event);
 	tabComponent.render();
-
 }, 6000);

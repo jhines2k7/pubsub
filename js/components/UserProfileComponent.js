@@ -18,6 +18,8 @@ function isEventForComponent(componentName) {
 }
 
 function replay(events) {
+	//let reversed = events.reverse();
+
 	return events.reduce(function(state, event) {		
 		/*obj.userName = event.payload.userName;
 		obj.firstName = event.payload.firstName;
@@ -28,7 +30,7 @@ function replay(events) {
 	}, ''); 	
 }
 
-// takes in a state object and returns a vnode
+// takes in the reduced component state and returns a vnode
 function view(state) {
 	return h('div', state);
 }
@@ -99,7 +101,7 @@ export default class UserProfileComponent {
 		        // metadata about the message like the channel, topic, 
 		        // timestamp and any other data which might have been 
 		        // added by the sender.
-		        console.log(data);
+		        //console.log(data);
 
 		    	this.render();
 		    }.bind(this)
@@ -111,6 +113,7 @@ export default class UserProfileComponent {
 		//let events = synthEvents.filter(isEventForComponent(this._componentName));
 
 		let reducedState = replay(events);
+		console.log(`Reduced state for ${this._componentName}: ${reducedState}`);
 
         const newVnode = view(reducedState);
 		this._container = updateDOM(this._container, newVnode);
