@@ -8,21 +8,10 @@ let patch = snabbdom.init([ // Init patch function with chosen modules
 
 let h = require('snabbdom/h').default; // helper function for creating vnodes
 
-function updateUserProfile(id) {
+function update(id) {
 	let events = this._eventBus.getEventStore().filter(isOrderEvent(id));
 
-	let reducedState = replay(events);
-
-	// userId, userName, firstName, lastName, email
-	//let container = document.getElementById('app');
-
-	/*var vnode = h(this._container, [
-	  h('span', {style: {fontWeight: 'bold'}}, reducedState.userName),
-	  reducedState.firstName,
-	  h('a', {props: {href: '/foo'}}, reducedState.lastName)
-	]);*/
-
-	//let vnode = h('div', {style: {fontWeight: 'bold'}}, reducedState.userName);	
+	return reducedState = replay(events);	
 }
 
 function isOrderEvent(id) {
@@ -38,13 +27,7 @@ function replay(events) {
 		obj.lastName = event.payload.lastName;
 		obj.email = event.payload.email;
 		return obj;
-	}, {});
- 	/*{  	
-	    userName: 'semaj',
-	    firstName: 'James',
-	    lastName: 'Hines',
-	    email: 'jameshines10@gmail.com'  
-  	};*/
+	}, {}); 	
 }
 
 // takes in a state object and returns a vnode
@@ -57,13 +40,24 @@ function updateDOM(container, newVnode) {
 }
 
 export default class UserProfileComponent {
-	constructor(container) {
-		//this._eventBus = eventBus;		
+	constructor(container, eventStore) {
+		this._eventStore = eventStore;		
 		this._container = container;		
 	}
 
-	subscribe(topic, callback) {
-		//this._eventBus.subscribe(topic, updateUserProfile.bind(this));
+	subscribe(topic, channel, callback) {
+		postal.subscribe({
+		    channel: "users",
+		    topic: topic,
+		    callback: function(data, envelope) {
+		        // `data` is the data published by the publisher. 
+		        // `envelope` is a wrapper around the data & contains 
+		        // metadata about the message like the channel, topic, 
+		        // timestamp and any other data which might have been 
+		        // added by the sender.
+		        console.log(data);
+		    }
+		});
 	}
 
 	render(state) {

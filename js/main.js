@@ -14,8 +14,8 @@ const patch = snabbdom.init([                   // Init patch function with choo
 ]);
 
 /*var subscription = postal.subscribe({
-    channel: "orders",
-    topic: "item.add",
+    channel: "userProfile",
+    topic: "profile.update",
     callback: function(data, envelope) {
         // `data` is the data published by the publisher. 
         // `envelope` is a wrapper around the data & contains 
@@ -27,28 +27,32 @@ const patch = snabbdom.init([                   // Init patch function with choo
 });
 
 postal.publish({
-    channel: "orders",
-    topic: "item.add",
+    channel: "userProfile",
+    topic: "profile.update",
     data: {
         sku: "AZDTF4346",
         qty: 21
     }
 });*/
+let EventStore = [];
 
 let container = document.getElementById('james');
-let jamesComponent = new UserProfileComponent(container);
+let jamesComponent = new UserProfileComponent(container, EventStore);
 jamesComponent.render('james');
 
 container = document.getElementById('casey');
-let caseyComponent = new UserProfileComponent(container);
+let caseyComponent = new UserProfileComponent(container, EventStore);
 caseyComponent.render('casey');
 
 setTimeout( () => {
-	jamesComponent.render('james orlando');
-	caseyComponent.render('casey weber');  
+	//jamesComponent.render('james orlando');
+	//caseyComponent.render('casey weber');
+	let buttton = new ButtonComponent();
+	// some event occurs... a click event;
+	buttton.publish('userProfile', 'profile.update', 'james orlando');
 }, 3000);
 
 setTimeout( () => {
-	jamesComponent.render('james orlando hines');
-	caseyComponent.render('casey weber mccarty');  
+	//jamesComponent.render('james orlando hines');
+	//caseyComponent.render('casey weber mccarty');  
 }, 6000);

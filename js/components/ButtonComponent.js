@@ -1,10 +1,9 @@
 export default class ButtonComponent {
-	constructor(eventBus) {
-		this._eventBus = eventBus;
-	}
-
-	updateUserProfile(event) {
-		this._eventBus.publish('profile/update', event.userId);
-		this._eventBus.addEventToStore(event);
+	publish(channel, topic, data) {
+		postal.publish({
+		    channel: channel,
+		    topic: topic,
+		    data: data
+		})
 	}
 }
