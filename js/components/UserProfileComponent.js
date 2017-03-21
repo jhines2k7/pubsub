@@ -52,9 +52,8 @@ function view(state) {
 	return h('div', state);
 }
 
-//var oldVnode = document.getElementById('placeholder');
-function updateDOM(newVnode) {
-	this._container = patch(this._container, newVnode);
+function updateDOM(container, newVnode) {
+	return patch(container, newVnode);
 }
 
 export default class UserProfileComponent {
@@ -68,10 +67,7 @@ export default class UserProfileComponent {
 	}
 
 	render(state) {
-		//oldVnode = this._container;
-
 		const newVnode = view(state);
-		//updateDOM.bind(this, newVnode);		
-		this._container = patch(this._container, newVnode);
+		this._container = updateDOM(this._container, newVnode);
 	}
 }

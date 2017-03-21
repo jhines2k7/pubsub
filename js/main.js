@@ -43,15 +43,6 @@ container = document.getElementById('casey');
 let caseyComponent = new UserProfileComponent(container);
 caseyComponent.render('casey');
 
-/*function view(currentDate) { 
-	return h('div', 'Current date ' + currentDate); 
-}
-
-var oldVnode = document.getElementById('placeholder');
-function updateDOM(newVnode) {
-	oldVnode = patch(oldVnode, newVnode);
-}*/
-
 setTimeout( () => {
 	jamesComponent.render('james orlando');
 	caseyComponent.render('casey weber');  
