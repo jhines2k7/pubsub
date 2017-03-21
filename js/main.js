@@ -1,18 +1,6 @@
 import UserProfileComponent from './components/UserProfileComponent'
 import ButtonComponent from './components/ButtonComponent'
 
-import postal from 'postal'
-
-import snabbdom from 'snabbdom';
-import h from 'snabbdom/h';
-
-const patch = snabbdom.init([                   // Init patch function with choosen modules
-  require('snabbdom/modules/class'),          // makes it easy to toggle classes
-  require('snabbdom/modules/props'),          // for setting properties on DOM elements
-  require('snabbdom/modules/style'),          // handles styling on elements with support for animations
-  require('snabbdom/modules/eventlisteners'), // attaches event listeners
-]);
-
 /*var subscription = postal.subscribe({
     channel: "userProfile",
     topic: "profile.update",
@@ -29,6 +17,7 @@ const patch = snabbdom.init([                   // Init patch function with choo
 postal.publish({
     channel: "userProfile",
     topic: "profile.update",
+    eventType: 'click',
     data: {
         sku: "AZDTF4346",
         qty: 21
@@ -37,22 +26,112 @@ postal.publish({
 let EventStore = [];
 
 let container = document.getElementById('james');
-let jamesComponent = new UserProfileComponent(container, EventStore);
-jamesComponent.render('james');
+let jamesComponent = new UserProfileComponent(container, EventStore, 'james');
+jamesComponent.subscribe('userProfile', 'profile.update.james');
+//jamesComponent.render();
 
 container = document.getElementById('casey');
-let caseyComponent = new UserProfileComponent(container, EventStore);
-caseyComponent.render('casey');
+let caseyComponent = new UserProfileComponent(container, EventStore, 'casey');
+caseyComponent.subscribe('userProfile', 'profile.update.casey');
 
-setTimeout( () => {
-	//jamesComponent.render('james orlando');
-	//caseyComponent.render('casey weber');
-	let buttton = new ButtonComponent();
-	// some event occurs... a click event;
-	buttton.publish('userProfile', 'profile.update', 'james orlando');
+container = document.getElementById('tab');
+let tabComponent = new UserProfileComponent(container, EventStore, 'tab');
+tabComponent.subscribe('userProfile', 'profile.update.tab');
+
+let button = new ButtonComponent(EventStore);
+// some event occurs... a click event;
+let event = {
+    channel: "userProfile",
+    componentName: 'james',
+    topic: "profile.update.james",	    
+    eventType: 'click',
+    data: 'james'
+}
+button.publish(event);
+jamesComponent.render();
+
+event = {
+    channel: "userProfile",
+    componentName: 'casey',
+    topic: "profile.update.casey",	    
+    eventType: 'click',
+    data: 'casey'
+}
+button.publish(event);
+caseyComponent.render();
+
+event = {
+    channel: "userProfile",
+    componentName: 'tab',
+    topic: "profile.update.tab",	    
+    eventType: 'click',
+    data: 'tab'
+}
+button.publish(event);
+tabComponent.render();
+
+setTimeout( () => {		
+	// some event occurs... a click event for example;
+	let event = {
+	    channel: "userProfile",
+	    componentName: 'james',
+	    topic: "profile.update.james",	    
+	    eventType: 'click',
+	    data: 'james orlando'
+	}
+	button.publish(event);
+	jamesComponent.render();
+
+	event = {
+	    channel: "userProfile",
+	    componentName: 'casey',
+	    topic: "profile.update.casey",	    
+	    eventType: 'click',
+	    data: 'casey weber'
+	}
+	button.publish(event);
+	caseyComponent.render();
+
+	event = {
+	    channel: "userProfile",
+	    componentName: 'tab',
+	    topic: "profile.update.tab",	    
+	    eventType: 'click',
+	    data: 'tabitha deanne'
+	}
+	button.publish(event);
+	tabComponent.render();
 }, 3000);
 
 setTimeout( () => {
-	//jamesComponent.render('james orlando hines');
-	//caseyComponent.render('casey weber mccarty');  
+	let event = {
+	    channel: "userProfile",
+	    componentName: 'james',
+	    topic: "profile.update.james",	    
+	    eventType: 'click',
+	    data: 'james orlando hines'
+	}
+	button.publish(event);
+	jamesComponent.render();
+
+	event = {
+	    channel: "userProfile",
+	    componentName: 'casey',
+	    topic: "profile.update.casey",	    
+	    eventType: 'click',
+	    data: 'casey weber mccarty'
+	}
+	button.publish(event);
+	caseyComponent.render();  
+
+	event = {
+	    channel: "userProfile",
+	    componentName: 'tab',
+	    topic: "profile.update.tab",	    
+	    eventType: 'click',
+	    data: 'tabitha deanne morgan'
+	}
+	button.publish(event);
+	tabComponent.render();
+
 }, 6000);

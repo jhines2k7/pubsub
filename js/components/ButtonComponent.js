@@ -1,9 +1,12 @@
+import postal from 'postal'
+
 export default class ButtonComponent {
-	publish(channel, topic, data) {
-		postal.publish({
-		    channel: channel,
-		    topic: topic,
-		    data: data
-		})
+	constructor(eventStore){
+		this._eventStore = eventStore;
+	}
+
+	publish(event) {
+		postal.publish(event);
+		this._eventStore.push(event);
 	}
 }
