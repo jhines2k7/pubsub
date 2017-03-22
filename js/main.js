@@ -47,7 +47,7 @@ let button = new ButtonComponent(EventStore);
 
 //fire an async event
 let asyncEvent = {
-    channel: "userProfile",
+    channel: "async",
     topic: "profile.update.james",      
     eventType: 'async.start',
     data: {

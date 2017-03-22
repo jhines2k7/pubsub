@@ -25,16 +25,13 @@ function replay(events, component) {
 		if(event.eventType === 'async.start') {
 			setTimeout( () => {
 				let event = {
-					channel: "userProfile",
+					channel: "async",
 				    topic: "profile.update.james",	    
 				    eventType: 'async.end',
 				    data: 'data returned from async-event'
 				}
 
-				postal.publish(event);
-
-				component._eventStore.push(event);
-
+				component.publish(event);
 				component.render();
 			}, 8000);
 		} else if (event.eventType === 'async.end') {
@@ -80,6 +77,11 @@ export default class UserComponent {
 		this._subscriptions[topic] = subscription
 
 		return subscription;
+	}
+
+	publish(event) {
+		postal.publish(event);
+		this._eventStore.push(event);
 	}
 
 	getSubscriptions() {

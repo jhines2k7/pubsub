@@ -25,7 +25,7 @@ function replay(events) {
 		state.firstName = event.payload.firstName;
 		state.lastName = event.payload.lastName;
 		state.email = event.payload.email;*/
-		if(event.topic === 'profile.update.james') {
+		if(event.topic === 'profile.update.james' && event.channed !== 'async') {
 			state.jamesData = event.data;
 		}
 
