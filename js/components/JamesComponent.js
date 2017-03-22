@@ -93,7 +93,7 @@ export default class UserComponent {
 
 		let reducedState = replay(events, this);
 
-        const newVnode = view(reducedState, this._componentName);
+        const newVnode = view(reducedState);
 		this._container = updateDOM(this._container, newVnode);
 	}
 }
