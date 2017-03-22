@@ -1,6 +1,7 @@
 import UserComponent from './components/UserComponent'
 import TabComponent from './components/TabComponent'
 import CaseyComponent from './components/CaseyComponent'
+import JamesComponent from './components/JamesComponent'
 import ButtonComponent from './components/ButtonComponent'
 
 /*var subscription = postal.subscribe({
@@ -28,7 +29,7 @@ postal.publish({
 let EventStore = [];
 
 let container = document.getElementById('james');
-let jamesComponent = new UserComponent(container, EventStore);
+let jamesComponent = new JamesComponent(container, EventStore);
 jamesComponent.subscribe('userProfile', 'profile.update.james');
 //jamesComponent.render();
 
@@ -43,10 +44,25 @@ tabComponent.subscribe('userProfile', 'profile.update.tab');
 tabComponent.subscribe('userProfile', 'profile.update.james');
 
 let button = new ButtonComponent(EventStore);
+
+//fire an async event
+let asyncEvent = {
+    channel: "userProfile",
+    topic: "profile.update.james",      
+    eventType: 'async.start',
+    data: {
+      url: 'getTwitterFollowers.php',
+      type: 'GET',
+      data: 'twitterUsername=jquery4u'
+    }
+}
+console.log('Async event fired from James Component before initial "click" event');
+button.publish(asyncEvent);
+
 // some event occurs... a click event;
 let event = {
     channel: "userProfile",
-    topic: "profile.update.james",	    
+    topic: "profile.update.james",      
     eventType: 'click',
     data: 'james'
 }
