@@ -39,10 +39,11 @@ function replay(events) {
 
 // takes in the reduced component state and returns a vnode
 function view(state) {
+
 	return h('div', [		
 		h('div', 'This is the casey component'),
-		h('div', `Reduced data for casey component: ${state.caseyData}`),
-		h('div', `Reduced data from updated tab component: ${state.tabData}`),
+		h('div', `Reduced data for casey component: ${typeof state.caseyData === 'undefined' ? '' : state.caseyData}`),
+		h('div', `Reduced data from updated tab component: ${typeof state.tabData === 'undefined' ? '' : state.tabData}`),
 		h('hr')	
 	]);
 }
@@ -52,10 +53,9 @@ function updateDOM(container, newVnode) {
 }
 
 export default class CaseyComponent {
-	constructor(container, eventStore, name) {
+	constructor(container, eventStore) {
 		this._eventStore = eventStore;		
 		this._container = container;
-		this._componentName = name;
 		this._subscriptions = {};
 	}
 
@@ -81,7 +81,6 @@ export default class CaseyComponent {
 		let events = this._eventStore.filter(isEventForComponent(this._subscriptions));
 
 		let reducedState = replay(events);
-		console.log(`Reduced state for ${this._componentName}: ${reducedState}`);
 
         const newVnode = view(reducedState);
 		this._container = updateDOM(this._container, newVnode);

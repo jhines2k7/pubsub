@@ -40,7 +40,6 @@ function replay(events) {
 // takes in the reduced component state and returns a vnode
 function view(state) {
 	return h('div', [		
-		h('div', 'This is the tab component'),
 		h('div', `Reduced data for tab component: ${state.tabData}`),
 		h('div', `Reduced data from updated james component: ${state.jamesData}`)	
 	]);
@@ -50,11 +49,10 @@ function updateDOM(container, newVnode) {
 	return patch(container, newVnode);
 }
 
-export default class JamesComponent {
-	constructor(container, eventStore, name) {
+export default class TabComponent {
+	constructor(container, eventStore) {
 		this._eventStore = eventStore;		
 		this._container = container;
-		this._componentName = name;
 		this._subscriptions = {};
 	}
 
@@ -80,7 +78,6 @@ export default class JamesComponent {
 		let events = this._eventStore.filter(isEventForComponent(this._subscriptions));
 
 		let reducedState = replay(events);
-		console.log(`Reduced state for ${this._componentName}: ${reducedState}`);
 
         const newVnode = view(reducedState);
 		this._container = updateDOM(this._container, newVnode);

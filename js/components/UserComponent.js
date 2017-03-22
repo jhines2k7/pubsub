@@ -27,10 +27,9 @@ function replay(events) {
 }
 
 // takes in the reduced component state and returns a vnode
-function view(state, name) {
+function view(state) {
 
 	return h('div', [
-		h('div', `This is the ${name} component`),
 		h('div', state),
 		h('hr')
 	]);
@@ -41,10 +40,9 @@ function updateDOM(container, newVnode) {
 }
 
 export default class UserComponent {
-	constructor(container, eventStore, name) {
+	constructor(container, eventStore) {
 		this._eventStore = eventStore;		
 		this._container = container;
-		this._componentName = name;
 		this._subscriptions = {};
 	}
 
@@ -70,7 +68,6 @@ export default class UserComponent {
 		let events = this._eventStore.filter(isEventForComponent(this._subscriptions));
 
 		let reducedState = replay(events);
-		console.log(`Reduced state for ${this._componentName}: ${reducedState}`);
 
         const newVnode = view(reducedState, this._componentName);
 		this._container = updateDOM(this._container, newVnode);
