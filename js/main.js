@@ -31,6 +31,7 @@ let EventStore = [];
 let container = document.getElementById('james');
 let jamesComponent = new JamesComponent(container, EventStore);
 jamesComponent.subscribe('userProfile', 'profile.update.james');
+jamesComponent.subscribeAsync();
 //jamesComponent.render();
 
 container = document.getElementById('casey');

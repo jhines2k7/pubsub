@@ -13,7 +13,7 @@ import postal from 'postal'
 function isEventForComponent(subscriptions) {
 	return (event) => {
 		//return event.topic === topic && event.componentName === componentName;
-		return subscriptions.hasOwnProperty(event.topic);
+		return subscriptions.hasOwnProperty(event.topic) && event.eventType !== 'async.success';
 	}			
 }
 
@@ -21,21 +21,7 @@ function replay(events, component) {
 	//let reversed = events.reverse();
 
 	return events.reduce(function(state, event) {
-		// we only want to fire off the async-event once...
-		if(event.eventType === 'async.start') {
-			setTimeout( () => {
-				let event = {
-					channel: "async",
-				    topic: "profile.update.james",	    
-				    eventType: 'async.end',
-				    data: 'data returned from async-event'
-				}
-
-				component.publish(event);
-				component.render();
-			}, 8000);
-		} else if (event.eventType === 'async.end') {
-			console.log('Async event ended from James Component');
+		if (event.eventType === 'async.success') {
 			state.asyncData = event.data;
 		} else {
 			state.syncData = event.data;	
@@ -77,6 +63,27 @@ export default class UserComponent {
 		this._subscriptions[topic] = subscription
 
 		return subscription;
+	}
+
+	subscribeAsync() {
+		postal.subscribe({
+		    channel: 'async',
+		    topic: 'profile.update.james',
+		    callback: function(data, envelope) {
+				console.log('Async event success from JamesComponent!');
+		    	setTimeout( () => {
+					let event = {
+						channel: "async",
+					    topic: "profile.update.james",	    
+					    eventType: 'async.success',
+					    data: 'data returned from async-event'
+					}
+
+					this.publish(event);
+					this.render();
+				}, 8000);
+		    }.bind(this)
+		});		
 	}
 
 	publish(event) {
