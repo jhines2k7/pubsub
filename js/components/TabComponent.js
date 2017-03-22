@@ -40,8 +40,8 @@ function replay(events) {
 // takes in the reduced component state and returns a vnode
 function view(state) {
 	return h('div', [		
-		h('div', `Reduced data for tab component: ${state.tabData}`),
-		h('div', `Reduced data from updated james component: ${state.jamesData}`)	
+		h('div', `Reduced data for tab component: ${typeof state.tabData === 'undefined' ? '' : state.tabData}`),
+		h('div', `Reduced data from updated james component: ${typeof state.jamesData === 'undefined' ? '' : state.jamesData}`)	
 	]);
 }
 

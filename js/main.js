@@ -1,4 +1,6 @@
-import UserProfileComponent from './components/UserProfileComponent'
+import UserComponent from './components/UserComponent'
+import TabComponent from './components/TabComponent'
+import CaseyComponent from './components/CaseyComponent'
 import ButtonComponent from './components/ButtonComponent'
 
 /*var subscription = postal.subscribe({
@@ -26,25 +28,24 @@ postal.publish({
 let EventStore = [];
 
 let container = document.getElementById('james');
-let jamesComponent = new UserProfileComponent(container, EventStore, 'james');
+let jamesComponent = new UserComponent(container, EventStore);
 jamesComponent.subscribe('userProfile', 'profile.update.james');
 //jamesComponent.render();
 
 container = document.getElementById('casey');
-let caseyComponent = new UserProfileComponent(container, EventStore, 'casey');
+let caseyComponent = new CaseyComponent(container, EventStore);
 caseyComponent.subscribe('userProfile', 'profile.update.casey');
+caseyComponent.subscribe('userProfile', 'profile.update.tab');
 
 container = document.getElementById('tab');
-let tabComponent = new UserProfileComponent(container, EventStore, 'tab');
+let tabComponent = new TabComponent(container, EventStore);
 tabComponent.subscribe('userProfile', 'profile.update.tab');
 tabComponent.subscribe('userProfile', 'profile.update.james');
-tabComponent.subscribe('userProfile', 'profile.update.casey');
 
 let button = new ButtonComponent(EventStore);
 // some event occurs... a click event;
 let event = {
     channel: "userProfile",
-    componentName: 'james',
     topic: "profile.update.james",	    
     eventType: 'click',
     data: 'james'
@@ -54,7 +55,6 @@ jamesComponent.render();
 
 event = {
     channel: "userProfile",
-    componentName: 'casey',
     topic: "profile.update.casey",	    
     eventType: 'click',
     data: 'casey'
@@ -64,7 +64,6 @@ caseyComponent.render();
 
 event = {
     channel: "userProfile",
-    componentName: 'tab',
     topic: "profile.update.tab",	    
     eventType: 'click',
     data: 'tab'
@@ -76,7 +75,6 @@ setTimeout( () => {
 	// some event occurs... a click event for example;
 	let event = {
 	    channel: "userProfile",
-	    componentName: 'james',
 	    topic: "profile.update.james",	    
 	    eventType: 'click',
 	    data: 'james orlando'
@@ -86,7 +84,6 @@ setTimeout( () => {
 
 	event = {
 	    channel: "userProfile",
-	    componentName: 'casey',
 	    topic: "profile.update.casey",	    
 	    eventType: 'click',
 	    data: 'casey weber'
@@ -96,7 +93,6 @@ setTimeout( () => {
 
 	event = {
 	    channel: "userProfile",
-	    componentName: 'tab',
 	    topic: "profile.update.tab",	    
 	    eventType: 'click',
 	    data: 'tabitha deanne'
@@ -108,7 +104,6 @@ setTimeout( () => {
 setTimeout( () => {
 	let event = {
 	    channel: "userProfile",
-	    componentName: 'james',
 	    topic: "profile.update.james",	    
 	    eventType: 'click',
 	    data: 'james orlando hines'
@@ -118,7 +113,6 @@ setTimeout( () => {
 
 	event = {
 	    channel: "userProfile",
-	    componentName: 'casey',
 	    topic: "profile.update.casey",	    
 	    eventType: 'click',
 	    data: 'casey weber mccarty'
@@ -128,7 +122,6 @@ setTimeout( () => {
 
 	event = {
 	    channel: "userProfile",
-	    componentName: 'tab',
 	    topic: "profile.update.tab",	    
 	    eventType: 'click',
 	    data: 'tabitha deanne morgan'
