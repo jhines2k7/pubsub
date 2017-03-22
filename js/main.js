@@ -37,6 +37,8 @@ caseyComponent.subscribe('userProfile', 'profile.update.casey');
 container = document.getElementById('tab');
 let tabComponent = new UserProfileComponent(container, EventStore, 'tab');
 tabComponent.subscribe('userProfile', 'profile.update.tab');
+tabComponent.subscribe('userProfile', 'profile.update.james');
+tabComponent.subscribe('userProfile', 'profile.update.casey');
 
 let button = new ButtonComponent(EventStore);
 // some event occurs... a click event;
