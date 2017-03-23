@@ -9,42 +9,37 @@ let patch = snabbdom.init([ // Init patch function with chosen modules
 let h = require('snabbdom/h').default; // helper function for creating vnodes
 
 import postal from 'postal'
-
-function isEventForComponent(subscriptions) {
-	return (event) => {
-		//return event.topic === topic && event.componentName === componentName;
-		return subscriptions.hasOwnProperty(event.topic);
-	}			
-}
-
-function replay(events) {
-	//let reversed = events.reverse();
-
-	return events.reduce(function(state, event) {
-		/*state.userName = event.payload.userName;
-		state.firstName = event.payload.firstName;
-		state.lastName = event.payload.lastName;
-		state.email = event.payload.email;*/
-		if(event.topic === 'profile.update.casey') {
-			state.caseyData = event.data;
-		}
-
-		if(event.topic === 'profile.update.tab') {
-			state.tabData = event.data;
-		}	
-		
-		return state;
-	}, {}); 	
-}
+import NestedComponent from './NestedComponent'
 
 // takes in the reduced component state and returns a vnode
-function view(state) {
+function view(state, component) {
+	let dynamic;
+	let urlList;
 
-	return h('div', [		
+	let nested = new NestedComponent(document.createElement('div'), component._eventStore);
+
+	if(state.asyncData) {
+		urlList = state.asyncData.chapterUrls.map(function(url){
+			return h('li', url);
+		});
+
+		dynamic = h('ul', urlList);
+	}
+
+	if(state.asyncError) {
+		dynamic = h('h3', 
+			{style: {fontWeight: 'bold', color: 'red', fontSize: 'large'}}, 
+			`${state.asyncError.message} -- simulated error`
+		);
+	}
+	
+	return h('div', [
 		h('div', 'This is the casey component'),
-		h('div', `Reduced data for casey component: ${typeof state.caseyData === 'undefined' ? '' : state.caseyData}`),
-		h('div', `Reduced data from updated tab component: ${typeof state.tabData === 'undefined' ? '' : state.tabData}`),
-		h('hr')	
+		h('div', {style: {fontWeight: 'bold', color: 'blue', fontSize: 'xx-large'}}, typeof state.syncData === 'undefined' ? '' : state.syncData),
+		h('h1', `Async data: ${typeof state.asyncData === 'undefined' ? '' : state.asyncData.heading}`),
+		state.nestedData ? nested.render() : null,
+		dynamic,
+		h('hr')
 	]);
 }
 
@@ -64,25 +59,63 @@ export default class CaseyComponent {
 		    channel: channel,
 		    topic: topic,
 		    callback: function(data, envelope) {
-		    	this.render();
+		    	let events = this._eventStore.filter(this._subscriptions);
+
+				let reducedState = this.replay(events);
+
+		    	this.render(reducedState);
 		    }.bind(this)
 		});
 
-		this._subscriptions[topic] = subscription
-
+		this._subscriptions[topic] = subscription;		
+		
 		return subscription;
+	}
+
+	subscribeAsync(topic, callback) {
+		let asyncSubscription = postal.subscribe({
+			channel: 'async',
+			topic: topic,
+			callback: callback.bind(this)    		    
+		});
+
+		this._subscriptions[topic] = asyncSubscription;		
+	}
+
+	publish(event) {
+		postal.publish(event);
+		this._eventStore.add(event);
 	}
 
 	getSubscriptions() {
 		return this._subscriptions;
 	}
 
-	render() {
-		let events = this._eventStore.filter(this._subscriptions);
+	getEventStore() {
+		return this._eventStore;
+	}
 
-		let reducedState = replay(events);
-
-        const newVnode = view(reducedState);
+	render(reducedState) {		
+        const newVnode = view(reducedState, this);
 		this._container = updateDOM(this._container, newVnode);
+
+		return this._container;
+	}
+
+	replay(events) {
+		return events.reduce(function(state, event) {
+			if (event.eventType === 'async.success') {
+				state.asyncData = event.data;
+				state.nestedData = true;
+			} else if(event.eventType === 'async.error'){
+				state.asyncError = event.data;
+				state.nestedData = false;
+			} else if(event.eventType === 'click') {
+				state.syncData = event.data;
+				state.nestedData = true;
+			}
+
+			return state;
+		}, {}); 	
 	}
 }

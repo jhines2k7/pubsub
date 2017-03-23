@@ -36,10 +36,10 @@ postal.publish({
 });*/
 let eventStore = new EventStore();
 
-let container = document.getElementById('james');
-let jamesComponent = new JamesComponent(container, eventStore);
-jamesComponent.subscribe('userProfile', 'profile.update.james');
-jamesComponent.subscribeAsync('profile.update.james.async.start', 
+let container = document.getElementById('casey');
+let caseyComponent = new CaseyComponent(container, eventStore);
+caseyComponent.subscribe('sync', 'component.update.casey');
+caseyComponent.subscribeAsync('component.update.casey.async.start', 
 	function(data, envelope) {
     	/*console.log('Async event fired from JamesComponent before initial "click" event');				
     	setTimeout( () => {
@@ -57,12 +57,12 @@ jamesComponent.subscribeAsync('profile.update.james.async.start',
 	  		console.log("Success!", response);
 	  		let event = {
 				channel: 'async',
-			    topic: 'profile.update.james.async.success',	    
+			    topic: 'component.update.casey.async.success',	    
 			    eventType: 'async.success',
 			    data: JSON.parse(response)
 			}
 
-			this._subscriptions['profile.update.james.async.success'] = {};
+			this._subscriptions['component.update.casey.async.success'] = {};
 			
 			this.publish(event);
 			let events = this._eventStore.filter(this._subscriptions);
@@ -74,12 +74,12 @@ jamesComponent.subscribeAsync('profile.update.james.async.start',
 			console.error("Failed!", error);
 	  		let event = {
 				channel: 'async',
-			    topic: 'profile.update.james.async.error',	    
+			    topic: 'component.update.casey.async.error',	    
 			    eventType: 'async.error',
 			    data: error
 			}
 
-			this._subscriptions['profile.update.james.async.error'] = {};
+			this._subscriptions['component.update.casey.async.error'] = {};
 			
 			this.publish(event);
 			let events = this._eventStore.filter(this._subscriptions);
@@ -88,134 +88,135 @@ jamesComponent.subscribeAsync('profile.update.james.async.start',
 		}.bind(this));
     });
 
-container = document.getElementById('casey');
-let caseyComponent = new CaseyComponent(container, eventStore);
-caseyComponent.subscribe('userProfile', 'profile.update.casey');
-caseyComponent.subscribe('userProfile', 'profile.update.tab');
+container = document.getElementById('james');
+let jamesComponent = new JamesComponent(container, eventStore);
+jamesComponent.subscribe('sync', 'component.update.james');
+jamesComponent.subscribe('sync', 'component.update.casey');
 
-container = document.getElementById('tab');
+/*container = document.getElementById('tab');
 let tabComponent = new TabComponent(container, eventStore);
-tabComponent.subscribe('userProfile', 'profile.update.tab');
-tabComponent.subscribe('userProfile', 'profile.update.james');
+tabComponent.subscribe('sync', 'profile.update.tab');
+tabComponent.subscribe('sync', 'profile.update.james');*/
 
 let button = new ButtonComponent(eventStore);
 
 //fire an async event
 let asyncEvent = {
     channel: "async",
-    topic: "profile.update.james.async.start",      
+    topic: "component.update.casey.async.start",      
     data: {
       url: '../story.json'
     }
 }
 button.publish(asyncEvent);
-let events = jamesComponent.getEventStore().filter(jamesComponent.getSubscriptions());
-let reducedState = jamesComponent.replay(events);
-jamesComponent.render(reducedState);
+let events = caseyComponent.getEventStore().filter(jamesComponent.getSubscriptions());
+let reducedState = caseyComponent.replay(events);
+caseyComponent.render(reducedState);
+
 // some event occurs... a click event;
 let event = {
-    channel: "userProfile",
-    topic: "profile.update.james",      
-    eventType: 'click',
-    data: 'james'
-}
-button.publish(event);
-events = jamesComponent.getEventStore().filter(jamesComponent.getSubscriptions());
-reducedState = jamesComponent.replay(events);
-jamesComponent.render(reducedState);
-
-event = {
-    channel: "userProfile",
-    topic: "profile.update.casey",	    
+    channel: "sync",
+    topic: "component.update.casey",      
     eventType: 'click',
     data: 'casey'
 }
 button.publish(event);
-caseyComponent.render();
+events = caseyComponent.getEventStore().filter(caseyComponent.getSubscriptions());
+reducedState = caseyComponent.replay(events);
+caseyComponent.render(reducedState);
 
 event = {
-    channel: "userProfile",
+    channel: "sync",
+    topic: "component.update.james",	    
+    eventType: 'click',
+    data: 'james'
+}
+button.publish(event);
+jamesComponent.render();
+
+/*event = {
+    channel: "sync",
     topic: "profile.update.tab",	    
     eventType: 'click',
     data: 'tab'
 }
 button.publish(event);
-tabComponent.render();
+tabComponent.render();*/
 
 setTimeout( () => {		
-	// some event occurs... a click event for example;
+	// some event occurs sometime later... a click event for example;
 	let event = {
-	    channel: "userProfile",
-	    topic: "profile.update.james",	    
-	    eventType: 'click',
-	    data: 'james orlando'
-	}
-	button.publish(event);
-	let events = jamesComponent.getEventStore().filter(jamesComponent.getSubscriptions());
-	let reducedState = jamesComponent.replay(events);
-	jamesComponent.render(reducedState);
-
-	event = {
-	    channel: "userProfile",
-	    topic: "profile.update.casey",	    
+	    channel: "sync",
+	    topic: "component.update.casey",	    
 	    eventType: 'click',
 	    data: 'casey weber'
 	}
 	button.publish(event);
-	caseyComponent.render();
+	let events = caseyComponent.getEventStore().filter(caseyComponent.getSubscriptions());
+	let reducedState = caseyComponent.replay(events);
+	caseyComponent.render(reducedState);
 
 	event = {
-	    channel: "userProfile",
+	    channel: "sync",
+	    topic: "component.update.james",	    
+	    eventType: 'click',
+	    data: 'james hines'
+	}
+	button.publish(event);
+	jamesComponent.render();
+
+	/*event = {
+	    channel: "sync",
 	    topic: "profile.update.tab",	    
 	    eventType: 'click',
 	    data: 'tabitha deanne'
 	}
 	button.publish(event);
-	tabComponent.render();
+	tabComponent.render();*/
 }, 3000);
 
 setTimeout( () => {
 	let event = {
-	    channel: "userProfile",
-	    topic: "profile.update.james",	    
-	    eventType: 'click',
-	    data: 'james orlando hines'
-	}
-	button.publish(event);
-	let events = jamesComponent.getEventStore().filter(jamesComponent.getSubscriptions())
-	let reducedState = jamesComponent.replay(events);
-	jamesComponent.render(reducedState);;
-
-	event = {
-	    channel: "userProfile",
-	    topic: "profile.update.casey",	    
+	    channel: "sync",
+	    topic: "component.update.casey",	    
 	    eventType: 'click',
 	    data: 'casey weber mccarty'
 	}
 	button.publish(event);
-	caseyComponent.render();
+	let events = caseyComponent.getEventStore().filter(caseyComponent.getSubscriptions())
+	let reducedState = caseyComponent.replay(events);
+	caseyComponent.render(reducedState);;
 
 	event = {
-	    channel: "userProfile",
+	    channel: "sync",
+	    topic: "component.update.james",	    
+	    eventType: 'click',
+	    data: 'james orlando hines'
+	}
+	button.publish(event);
+	jamesComponent.render();
+
+	/*event = {
+	    channel: "sync",
 	    topic: "profile.update.tab",	    
 	    eventType: 'click',
 	    data: 'tabitha deanne morgan'
 	}
 	button.publish(event);
-	tabComponent.render();
+	tabComponent.render();*/
 }, 6000);
 
 setTimeout( () => {
 	//fire a failed async event
 	let asyncEvent = {
 	    channel: "async",
-	    topic: "profile.update.james.async.start",      
+	    topic: "component.update.casey.async.start",      
 	    data: {
 	      url: '../stoy.json'
 	    }
 	}
 	button.publish(asyncEvent);
-	let events = jamesComponent.getEventStore().filter(jamesComponent.getSubscriptions());
-	let reducedState = jamesComponent.replay(events);
-	jamesComponent.render(reducedState);
-}, 10000);
+	let events = caseyComponent.getEventStore().filter(caseyComponent.getSubscriptions());
+	let reducedState = caseyComponent.replay(events);
+	caseyComponent.render(reducedState);
+}, 9000);
