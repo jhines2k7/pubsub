@@ -41,7 +41,7 @@ function replay(events) {
 function view(state) {
 
 	return h('div', [		
-		h('div', 'This is the james component'),
+		h('div', {style: {fontWeight: 'bold'}}, 'This is the james component'),
 		h('div', [
 			'Reduced data for james component: ',
 

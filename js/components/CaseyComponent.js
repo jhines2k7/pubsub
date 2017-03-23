@@ -34,7 +34,7 @@ function view(state, component) {
 	}
 	
 	return h('div', [
-		h('div', 'This is the casey component'),
+		h('div', {style: {fontWeight: 'bold'}}, 'This is the casey component'),
 		h('div', {style: {fontWeight: 'bold', color: 'blue', fontSize: 'xx-large'}}, typeof state.syncData === 'undefined' ? '' : state.syncData),
 		h('h1', `Async data: ${typeof state.asyncData === 'undefined' ? '' : state.asyncData.heading}`),
 		state.nestedData ? nested.render() : null,
