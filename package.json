@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "babel --presets es2015 js/main.js -o build/main.bundle.js",
-    "watch": "watch \"npm run build\" js"
+    "start": "http-server"
   },
   "author": "",
   "license": "ISC",

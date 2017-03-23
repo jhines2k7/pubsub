@@ -1,1 +1,1 @@
-node_modules/.bin/watch "sh build.sh" js
+node_modules/.bin/http-server & node_modules/.bin/watch "sh build.sh" js
