@@ -1,1 +1,0 @@
-node_modules/.bin/http-server & node_modules/.bin/watch "sh build-dev.sh" js

@@ -1,8 +1,14 @@
 # clean the build directory
-rm build/*
+if [ -d "build" ]; then
+  rm build/*
+fi
+
+if [ ! -d "build" ]; then
+  mkdir build
+fi
 
 # js transform
-node_modules/.bin/webpack
+node_modules/.bin/webpack --config=webpack.config.js
 
 # copy index.html to build directory
 cp index.html build
