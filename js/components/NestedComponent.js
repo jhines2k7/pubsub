@@ -8,7 +8,7 @@ let patch = snabbdom.init([ // Init patch function with chosen modules
 
 let h = require('snabbdom/h').default; // helper function for creating vnodes
 
-import postal from 'postal'
+import postal from 'postal/lib/postal.lodash'
 
 function view() {		
 	return h('h1', 'Nested Component');

@@ -1,4 +1,4 @@
-import postal from 'postal'
+import postal from 'postal/lib/postal.lodash'
 
 export default class ButtonComponent {
 	constructor(eventStore){
