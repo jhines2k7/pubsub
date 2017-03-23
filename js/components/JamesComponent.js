@@ -11,13 +11,6 @@ let h = require('snabbdom/h').default; // helper function for creating vnodes
 import postal from 'postal'
 import NestedComponent from './NestedComponent'
 
-function isEventForComponent(subscriptions) {
-	return (event) => {
-		//return event.topic === topic && event.componentName === componentName;
-		return subscriptions.hasOwnProperty(event.topic);
-	}			
-}
-
 // takes in the reduced component state and returns a vnode
 function view(state, component) {
 	let dynamic;
@@ -63,7 +56,7 @@ export default class UserComponent {
 		    channel: channel,
 		    topic: topic,
 		    callback: function(data, envelope) {
-		    	let events = this._eventStore.filter(isEventForComponent(this._subscriptions));
+		    	let events = this._eventStore.filter(this._subscriptions);
 
 				let reducedState = this.replay(events);
 
@@ -88,11 +81,15 @@ export default class UserComponent {
 
 	publish(event) {
 		postal.publish(event);
-		this._eventStore.push(event);
+		this._eventStore.add(event);
 	}
 
 	getSubscriptions() {
 		return this._subscriptions;
+	}
+
+	getEventStore() {
+		return this._eventStore;
 	}
 
 	render(reducedState) {		
@@ -102,7 +99,7 @@ export default class UserComponent {
 		return this._container;
 	}
 
-	function replay(events) {
+	replay(events) {
 		return events.reduce(function(state, event) {
 			if (event.eventType === 'async.success') {
 				state.asyncData = event.data;

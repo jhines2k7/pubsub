@@ -10,8 +10,7 @@ let h = require('snabbdom/h').default; // helper function for creating vnodes
 
 import postal from 'postal'
 
-// takes in the reduced component state and returns a vnode
-function view(state) {		
+function view() {		
 	return h('h1', 'Nested Component');
 }
 

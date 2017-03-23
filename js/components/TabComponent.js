@@ -75,7 +75,7 @@ export default class TabComponent {
 	}
 
 	render() {
-		let events = this._eventStore.filter(isEventForComponent(this._subscriptions));
+		let events = this._eventStore.filter(this._subscriptions);
 
 		let reducedState = replay(events);
 

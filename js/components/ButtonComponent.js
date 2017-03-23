@@ -7,6 +7,6 @@ export default class ButtonComponent {
 
 	publish(event) {
 		postal.publish(event);
-		this._eventStore.push(event);
+		this._eventStore.add(event);
 	}
 }

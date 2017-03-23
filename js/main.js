@@ -3,6 +3,14 @@ import TabComponent from './components/TabComponent'
 import CaseyComponent from './components/CaseyComponent'
 import JamesComponent from './components/JamesComponent'
 import ButtonComponent from './components/ButtonComponent'
+import get from './async.js'
+import EventStore from './EventStore'
+
+/*get('../story.json').then(function(response) {
+  console.log("Success!", response);
+}, function(error) {
+  console.error("Failed!", error);
+});*/
 
 /*var subscription = postal.subscribe({
     channel: "userProfile",
@@ -26,40 +34,84 @@ postal.publish({
         qty: 21
     }
 });*/
-let EventStore = [];
+let eventStore = new EventStore();
 
 let container = document.getElementById('james');
-let jamesComponent = new JamesComponent(container, EventStore);
+let jamesComponent = new JamesComponent(container, eventStore);
 jamesComponent.subscribe('userProfile', 'profile.update.james');
-jamesComponent.subscribeAsync();
-//jamesComponent.render();
+jamesComponent.subscribeAsync('profile.update.james.async.start', 
+	function(data, envelope) {
+    	/*console.log('Async event fired from JamesComponent before initial "click" event');				
+    	setTimeout( () => {
+			let event = {
+				channel: 'async',
+			    topic: 'profile.update.james.async.success',	    
+			    eventType: 'async.success',
+			    data: 'data returned from async-event'
+			}
+			
+			this.publish(event);
+			this.render();
+		}, 8000);*/
+		get(data.url).then(function(response) {
+	  		console.log("Success!", response);
+	  		let event = {
+				channel: 'async',
+			    topic: 'profile.update.james.async.success',	    
+			    eventType: 'async.success',
+			    data: JSON.parse(response)
+			}
+
+			this._subscriptions['profile.update.james.async.success'] = {};
+			
+			this.publish(event);
+			let events = this._eventStore.filter(this._subscriptions);
+			let reducedState = this.replay(events);			
+			this.render(reducedState);
+  						
+		}.bind(this), 
+		function(error) {
+			console.error("Failed!", error);
+	  		let event = {
+				channel: 'async',
+			    topic: 'profile.update.james.async.error',	    
+			    eventType: 'async.error',
+			    data: error
+			}
+
+			this._subscriptions['profile.update.james.async.error'] = {};
+			
+			this.publish(event);
+			let events = this._eventStore.filter(this._subscriptions);
+			let reducedState = this.replay(events);
+			this.render(reducedState);
+		}.bind(this));
+    });
 
 container = document.getElementById('casey');
-let caseyComponent = new CaseyComponent(container, EventStore);
+let caseyComponent = new CaseyComponent(container, eventStore);
 caseyComponent.subscribe('userProfile', 'profile.update.casey');
 caseyComponent.subscribe('userProfile', 'profile.update.tab');
 
 container = document.getElementById('tab');
-let tabComponent = new TabComponent(container, EventStore);
+let tabComponent = new TabComponent(container, eventStore);
 tabComponent.subscribe('userProfile', 'profile.update.tab');
 tabComponent.subscribe('userProfile', 'profile.update.james');
 
-let button = new ButtonComponent(EventStore);
+let button = new ButtonComponent(eventStore);
 
 //fire an async event
 let asyncEvent = {
     channel: "async",
-    topic: "profile.update.james",      
-    eventType: 'async.start',
+    topic: "profile.update.james.async.start",      
     data: {
-      url: 'getTwitterFollowers.php',
-      type: 'GET',
-      data: 'twitterUsername=jquery4u'
+      url: '../story.json'
     }
 }
-console.log('Async event fired from James Component before initial "click" event');
 button.publish(asyncEvent);
-
+let events = jamesComponent.getEventStore().filter(jamesComponent.getSubscriptions());
+let reducedState = jamesComponent.replay(events);
+jamesComponent.render(reducedState);
 // some event occurs... a click event;
 let event = {
     channel: "userProfile",
@@ -68,7 +120,9 @@ let event = {
     data: 'james'
 }
 button.publish(event);
-jamesComponent.render();
+events = jamesComponent.getEventStore().filter(jamesComponent.getSubscriptions());
+reducedState = jamesComponent.replay(events);
+jamesComponent.render(reducedState);
 
 event = {
     channel: "userProfile",
@@ -97,7 +151,9 @@ setTimeout( () => {
 	    data: 'james orlando'
 	}
 	button.publish(event);
-	jamesComponent.render();
+	let events = jamesComponent.getEventStore().filter(jamesComponent.getSubscriptions());
+	let reducedState = jamesComponent.replay(events);
+	jamesComponent.render(reducedState);
 
 	event = {
 	    channel: "userProfile",
@@ -126,7 +182,9 @@ setTimeout( () => {
 	    data: 'james orlando hines'
 	}
 	button.publish(event);
-	jamesComponent.render();
+	let events = jamesComponent.getEventStore().filter(jamesComponent.getSubscriptions())
+	let reducedState = jamesComponent.replay(events);
+	jamesComponent.render(reducedState);;
 
 	event = {
 	    channel: "userProfile",
@@ -146,3 +204,18 @@ setTimeout( () => {
 	button.publish(event);
 	tabComponent.render();
 }, 6000);
+
+setTimeout( () => {
+	//fire a failed async event
+	let asyncEvent = {
+	    channel: "async",
+	    topic: "profile.update.james.async.start",      
+	    data: {
+	      url: '../stoy.json'
+	    }
+	}
+	button.publish(asyncEvent);
+	let events = jamesComponent.getEventStore().filter(jamesComponent.getSubscriptions());
+	let reducedState = jamesComponent.replay(events);
+	jamesComponent.render(reducedState);
+}, 10000);
