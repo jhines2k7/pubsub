@@ -9,33 +9,53 @@ let patch = snabbdom.init([ // Init patch function with chosen modules
 let h = require('snabbdom/h').default; // helper function for creating vnodes
 
 import postal from 'postal'
+import NestedComponent from './NestedComponent'
 
 function isEventForComponent(subscriptions) {
 	return (event) => {
 		//return event.topic === topic && event.componentName === componentName;
-		return subscriptions.hasOwnProperty(event.topic) && event.eventType !== 'async.success';
+		return subscriptions.hasOwnProperty(event.topic);
 	}			
 }
 
-function replay(events, component) {
+function replay(events) {
 	//let reversed = events.reverse();
 
 	return events.reduce(function(state, event) {
 		if (event.eventType === 'async.success') {
 			state.asyncData = event.data;
-		} else {
-			state.syncData = event.data;	
-		}		
-		
+		} else if(event.eventType === 'async.error'){
+			state.asyncError = event.data;
+		} else if(event.eventType === 'click') {
+			state.syncData = event.data;
+		}
+
 		return state;
 	}, {}); 	
 }
 
 // takes in the reduced component state and returns a vnode
-function view(state) {
+function view(state, component) {
+	let dynamic = [];
+
+	let nested = new NestedComponent(document.createElement('div'), component._eventStore);
+
+	if(state.asyncData) {
+		dynamic = state.asyncData.chapterUrls.map(function(url){
+			return h('li', url);
+		});
+	}
+
+	if(state.asyncError) {
+		dynamic = h('li', `${state.asyncError.message}`);
+	}
+	
 	return h('div', [
-		h('div', state.syncData),
-		h('div', `Async data ${typeof state.asyncData === 'undefined' ? '' : state.asyncData}`),
+		h('div', typeof state.syncData === 'undefined' ? '' : state.syncData),
+		h('div', `Async data ${typeof state.asyncData === 'undefined' ? '' : state.asyncData.heading}`),
+		h('h1', `${typeof state.asyncData === 'undefined' ? '' : state.asyncData.heading}`),
+		nested.render(),
+		h('ul', dynamic),
 		h('hr')
 	]);
 }
@@ -60,30 +80,19 @@ export default class UserComponent {
 		    }.bind(this)
 		});
 
-		this._subscriptions[topic] = subscription
-
+		this._subscriptions[topic] = subscription;		
+		
 		return subscription;
 	}
 
-	subscribeAsync() {
-		postal.subscribe({
-		    channel: 'async',
-		    topic: 'profile.update.james',
-		    callback: function(data, envelope) {
-				console.log('Async event success from JamesComponent!');
-		    	setTimeout( () => {
-					let event = {
-						channel: "async",
-					    topic: "profile.update.james",	    
-					    eventType: 'async.success',
-					    data: 'data returned from async-event'
-					}
+	subscribeAsync(topic, callback) {
+		let asyncSubscription = postal.subscribe({
+			channel: 'async',
+			topic: topic,
+			callback: callback.bind(this)    		    
+		});
 
-					this.publish(event);
-					this.render();
-				}, 8000);
-		    }.bind(this)
-		});		
+		this._subscriptions[topic] = asyncSubscription;		
 	}
 
 	publish(event) {
@@ -100,7 +109,9 @@ export default class UserComponent {
 
 		let reducedState = replay(events, this);
 
-        const newVnode = view(reducedState);
+        const newVnode = view(reducedState, this);
 		this._container = updateDOM(this._container, newVnode);
+
+		return this._container;
 	}
 }

@@ -20,17 +20,32 @@ function isEventForComponent(subscriptions) {
 function replay(events) {
 	//let reversed = events.reverse();
 
-	return events.reduce(function(state, event) {		
-		state = event.data
+	return events.reduce(function(state, event) {
+		if (event.eventType === 'async.success') {
+			state.asyncData = event.data;
+		} else {
+			state.syncData = event.data;	
+		}		
+		
 		return state;
-	}, ''); 	
+	}, {}); 	
 }
 
 // takes in the reduced component state and returns a vnode
 function view(state) {
+	let liList = [];
 
+	if(state.asyncData) {
+		liList = state.asyncData.chapterUrls.map(function(url){
+			return h('li', url);
+		});
+	}
+	
 	return h('div', [
-		h('div', state),
+		h('div', state.syncData),
+		h('div', `Async data ${typeof state.asyncData === 'undefined' ? '' : state.asyncData.heading}`),
+		h('h1', `${typeof state.asyncData === 'undefined' ? '' : state.asyncData.heading}`),
+		h('ul', liList),
 		h('hr')
 	]);
 }
@@ -55,9 +70,57 @@ export default class UserComponent {
 		    }.bind(this)
 		});
 
-		this._subscriptions[topic] = subscription
+		this._subscriptions[topic] = subscription;
 
 		return subscription;
+	}
+
+	subscribeAsync(topic, callback) {
+		let asyncSubscription = postal.subscribe({
+			channel: 'async',
+			topic: topic,
+			callback: callback.bind(this)    		    
+		});
+
+		this._subscriptions[topic] = asyncSubscription;
+
+		/*channel: 'async',
+	    topic: 'profile.update.james.async.start',
+	    callback: function(data, envelope) {
+	    	console.log('Async event fired from JamesComponent before initial "click" event');				
+	    	setTimeout( () => {
+				let event = {
+					channel: 'async',
+				    topic: 'profile.update.james.async.success',	    
+				    eventType: 'async.success',
+				    data: 'data returned from async-event'
+				}
+				
+				this.publish(event);
+				this.render();
+			}, 8000);
+	    }.bind(this)*/
+		/*let asyncSuccess = postal.subscribe({
+		    channel: 'async',
+		    topic: 'profile.update.james.async.success',
+		    callback: function(data, envelope) {
+		    	console.log('Async success event fired');
+
+		    	let event = {
+					channel: 'async',
+				    topic: 'profile.update.james.async.success2',	    
+				    eventType: 'async.success',
+				    data: 'data returned from async-event'
+				}
+				
+				this.publish(event);
+		    }.bind(this)
+		});*/
+	}
+
+	publish(event) {
+		postal.publish(event);
+		this._eventStore.push(event);
 	}
 
 	getSubscriptions() {
@@ -67,9 +130,9 @@ export default class UserComponent {
 	render() {
 		let events = this._eventStore.filter(isEventForComponent(this._subscriptions));
 
-		let reducedState = replay(events);
+		let reducedState = replay(events, this);
 
-        const newVnode = view(reducedState, this._componentName);
+        const newVnode = view(reducedState);
 		this._container = updateDOM(this._container, newVnode);
 	}
 }
