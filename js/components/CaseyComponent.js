@@ -95,8 +95,8 @@ export default class CaseyComponent {
 		return this._eventStore;
 	}
 
-	render(reducedState) {		
-        const newVnode = view(reducedState, this);
+	render(state) {		
+        const newVnode = view(state, this);
 		this._container = updateDOM(this._container, newVnode);
 
 		return this._container;
