@@ -220,3 +220,18 @@ setTimeout( () => {
 	let reducedState = caseyComponent.replay(events);
 	caseyComponent.render(reducedState);
 }, 9000);
+
+setTimeout( () => {
+    console.log("Firing a final async event");
+    let asyncEvent = {
+        channel: "async",
+        topic: "component.update.casey.async.start",      
+        data: {
+            url: '../story.json'
+        }
+    }
+    button.publish(asyncEvent);
+    let events = caseyComponent.getEventStore().filter(jamesComponent.getSubscriptions());
+    let reducedState = caseyComponent.replay(events);
+    caseyComponent.render(reducedState);
+}, 12000);
