@@ -29,7 +29,7 @@ function view(state, component) {
 	if(state.asyncError) {
 		dynamic = h('h3', 
 			{style: {fontWeight: 'bold', color: 'red', fontSize: 'large'}}, 
-			`${state.asyncError.message} -- simulated error`
+			`${typeof state.asyncError === 'undefined' ? '' : state.asyncError.message} -- simulated error`
 		);
 	}
 	

@@ -9,5 +9,7 @@ fi
 
 # js transform
 node_modules/.bin/webpack --config=webpack.config-dev.js
+#timestamp = date +"%Y%m%d_%H%M%S"
+# append # to end of js file for cache busting
 
 date; echo;
