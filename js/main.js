@@ -332,4 +332,36 @@ setTimeout( () => {
 	let events = caseyComponent.getEventStore().filter(caseyComponent.getSubscriptions())
 	let reducedState = caseyComponent.replay(events);
 	caseyComponent.render(reducedState);
+}, 18000);
+
+// adds two items in the list of chapters
+setTimeout( () => {
+	let listElements = document.querySelectorAll('li');
+	let list = [];
+
+	listElements.forEach( (element) => { list.push(element.innerText) });
+
+	list.push('chapter-7.json');
+	list.push('chapter-8.json');
+	
+	// remove the second ele
+	stateData = {
+		name: document.getElementById('name').innerText,
+		heading: document.getElementById('heading') ? document.getElementById('heading').innerText : '',
+		chapters: list,
+		showAsyncError: false,
+		asyncErrorMessage: '',
+		showNestedComponent: true
+	}
+
+	let event = {
+	    channel: "sync",
+	    topic: "component.update.casey",	    
+	    eventType: 'click',
+	    data: stateData
+	}
+	button.publish(event);
+	let events = caseyComponent.getEventStore().filter(caseyComponent.getSubscriptions())
+	let reducedState = caseyComponent.replay(events);
+	caseyComponent.render(reducedState);
 }, 15000);
