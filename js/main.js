@@ -153,20 +153,18 @@ let list = [];
 
 listElements.forEach( (element) => { list.push(element.innerText) });
 
-let stateData = {
-	name: 'casey',
-	heading: document.getElementById('heading') ? document.getElementById('heading').innerText : '',
-	chapters: list,
-	showAsyncError: false,
-	asyncErrorMessage: '',
-	showNestedComponent: true
-}
-
 let event = {
     channel: "sync",
     topic: "component.update.casey",      
     eventType: 'click',
-    data: stateData
+    data: {
+		name: 'casey',
+		heading: document.getElementById('heading') ? document.getElementById('heading').innerText : '',
+		chapters: list,
+		showAsyncError: false,
+		asyncErrorMessage: '',
+		showNestedComponent: true
+	}
 }
 button.publish(event);
 let events = caseyComponent.getEventStore().filter(caseyComponent.getSubscriptions());
@@ -197,20 +195,19 @@ setTimeout( () => {
 
 	listElements.forEach( (element) => { list.push(element.innerText) });
 
-	stateData = {
-		name: 'casey weber',
-		heading: document.getElementById('heading') ? document.getElementById('heading').innerText : '',
-		chapters: list,
-		showAsyncError: false,
-		asyncErrorMessage: '',
-		showNestedComponent: true
-	}
 	// some event occurs sometime later... a click event for example;
 	let event = {
 	    channel: "sync",
 	    topic: "component.update.casey",	    
 	    eventType: 'click',
-	    data: stateData
+	    data: {
+			name: 'casey weber',
+			heading: document.getElementById('heading') ? document.getElementById('heading').innerText : '',
+			chapters: list,
+			showAsyncError: false,
+			asyncErrorMessage: '',
+			showNestedComponent: true
+		}
 	}
 	button.publish(event);
 	let events = caseyComponent.getEventStore().filter(caseyComponent.getSubscriptions());
@@ -240,22 +237,20 @@ setTimeout( () => {
 	let listElements = document.querySelectorAll('li');
 	let list = [];
 
-	listElements.forEach( (element) => { list.push(element.innerText) });
-	
-	stateData = {
-		name: 'casey weber mccarty',
-		heading: document.getElementById('heading') ? document.getElementById('heading').innerText : '',
-		chapters: list,
-		showAsyncError: false,
-		asyncErrorMessage: '',
-		showNestedComponent: true
-	}
+	listElements.forEach( (element) => { list.push(element.innerText) });		
 
 	let event = {
 	    channel: "sync",
 	    topic: "component.update.casey",	    
 	    eventType: 'click',
-	    data: stateData
+	    data: {
+			name: 'casey weber mccarty',
+			heading: document.getElementById('heading') ? document.getElementById('heading').innerText : '',
+			chapters: list,
+			showAsyncError: false,
+			asyncErrorMessage: '',
+			showNestedComponent: true
+		}
 	}
 	button.publish(event);
 	let events = caseyComponent.getEventStore().filter(caseyComponent.getSubscriptions())
@@ -313,26 +308,24 @@ setTimeout( () => {
 	listElements.forEach( (element) => { list.push(element.innerText) });
 	
 	// remove the second ele
-	stateData = {
-		name: document.getElementById('name').innerText,
-		heading: document.getElementById('heading') ? document.getElementById('heading').innerText : '',
-		chapters: list.filter( (item) => { return item !== 'chapter-3.json' } ),
-		showAsyncError: false,
-		asyncErrorMessage: '',
-		showNestedComponent: true
-	}
-
 	let event = {
 	    channel: "sync",
 	    topic: "component.update.casey",	    
 	    eventType: 'click',
-	    data: stateData
+	    data: {
+			name: document.getElementById('name').innerText,
+			heading: document.getElementById('heading') ? document.getElementById('heading').innerText : '',
+			chapters: list.filter( (item) => { return item !== 'chapter-3.json' } ),
+			showAsyncError: false,
+			asyncErrorMessage: '',
+			showNestedComponent: true
+		}
 	}
 	button.publish(event);
 	let events = caseyComponent.getEventStore().filter(caseyComponent.getSubscriptions())
 	let reducedState = caseyComponent.replay(events);
 	caseyComponent.render(reducedState);
-}, 18000);
+}, 15000);
 
 // adds two items in the list of chapters
 setTimeout( () => {
@@ -344,24 +337,21 @@ setTimeout( () => {
 	list.push('chapter-7.json');
 	list.push('chapter-8.json');
 	
-	// remove the second ele
-	stateData = {
-		name: document.getElementById('name').innerText,
-		heading: document.getElementById('heading') ? document.getElementById('heading').innerText : '',
-		chapters: list,
-		showAsyncError: false,
-		asyncErrorMessage: '',
-		showNestedComponent: true
-	}
-
 	let event = {
 	    channel: "sync",
 	    topic: "component.update.casey",	    
 	    eventType: 'click',
-	    data: stateData
+	    data: {
+			name: document.getElementById('name').innerText,
+			heading: document.getElementById('heading') ? document.getElementById('heading').innerText : '',
+			chapters: list,
+			showAsyncError: false,
+			asyncErrorMessage: '',
+			showNestedComponent: true
+		}
 	}
 	button.publish(event);
 	let events = caseyComponent.getEventStore().filter(caseyComponent.getSubscriptions())
 	let reducedState = caseyComponent.replay(events);
 	caseyComponent.render(reducedState);
-}, 15000);
+}, 18000);
