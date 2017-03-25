@@ -13,32 +13,22 @@ import NestedComponent from './NestedComponent'
 
 // takes in the reduced component state and returns a vnode
 function view(state, component) {
-	let dynamic;
-	let urlList;
-
-	let nested = new NestedComponent(document.createElement('div'), component._eventStore);
-
-	if(state.asyncData) {
-		urlList = state.asyncData.chapterUrls.map(function(url){
+	let urlList = state.chapters.map(function(url){
 			return h('li', url);
 		});
 
-		dynamic = h('ul', urlList);
-	}
-
-	if(state.asyncError) {
-		dynamic = h('h3', 
-			{style: {fontWeight: 'bold', color: 'red', fontSize: 'large'}}, 
-			`${typeof state.asyncError === 'undefined' ? '' : state.asyncError.message} -- simulated error`
-		);
-	}
+	let nested = new NestedComponent(document.createElement('div'), component._eventStore);	
 	
 	return h('div', [
 		h('div', {style: {fontWeight: 'bold'}}, 'This is the casey component'),
-		h('div', {style: {fontWeight: 'bold', color: 'blue', fontSize: 'xx-large'}}, typeof state.syncData === 'undefined' ? '' : state.syncData),
-		h('h1', `Async data: ${typeof state.asyncData === 'undefined' ? '' : state.asyncData.heading}`),
-		state.nestedData ? nested.render() : null,
-		dynamic,
+		h('div', {style: {fontWeight: 'bold', color: 'blue', fontSize: 'xx-large'}}, state.name),
+		h('h1', `Async data: ${state.heading}`),
+		h('ul', urlList),
+		state.showNestedComponent ? nested.render() : null,
+		h('h3', 
+			{style: {fontWeight: 'bold', color: 'red', fontSize: 'large'}}, 
+			state.showAsyncError ? `${state.asyncErrorMessage} -- simulated error` : ''
+		),
 		h('hr')
 	]);
 }
@@ -59,11 +49,11 @@ export default class CaseyComponent {
 		    channel: channel,
 		    topic: topic,
 		    callback: function(data, envelope) {
-		    	let events = this._eventStore.filter(this._subscriptions);
+		    	/*let events = this._eventStore.filter(this._subscriptions);
 
 				let reducedState = this.replay(events);
 
-		    	this.render(reducedState);
+		    	this.render(reducedState);*/
 		    }.bind(this)
 		});
 
@@ -104,16 +94,14 @@ export default class CaseyComponent {
 
 	replay(events) {
 		return events.reduce(function(state, event) {
-			if (event.eventType === 'async.success') {
-				state.asyncData = event.data;
-				state.nestedData = true;
-			} else if(event.eventType === 'async.error'){
-				state.asyncError = event.data;
-				state.nestedData = false;
-			} else if(event.eventType === 'click') {
-				state.syncData = event.data;
-				state.nestedData = true;
-			}
+			state.name = event.data.name;
+			state.heading = event.data.heading;
+			
+			state.chapters = event.data.chapters;		
+			
+			state.showAsyncError = event.data.showAsyncError;
+			state.asyncErrorMessage = event.data.asyncErrorMessage;
+			state.showNestedComponent = event.data.showNestedComponent;
 
 			return state;
 		}, {}); 	

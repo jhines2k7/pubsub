@@ -16,6 +16,6 @@ export default class EventStore {
 function isEventForComponent(subscriptions) {
 	return (event) => {
 		//return event.topic === topic && event.componentName === componentName;
-		return subscriptions.hasOwnProperty(event.topic);
+		return subscriptions.hasOwnProperty(event.topic) && event.topic !== 'component.update.casey.async.start';
 	}			
 }

@@ -34,6 +34,19 @@ postal.publish({
         qty: 21
     }
 });*/
+
+/*
+{
+  "heading": "A story about something",
+  "chapterUrls": [
+    "chapter-1.json",
+    "chapter-2.json",
+    "chapter-3.json",
+    "chapter-4.json",
+    "chapter-5.json"
+  ]
+}
+*/
 let eventStore = new EventStore();
 
 let container = document.getElementById('casey');
@@ -55,11 +68,19 @@ caseyComponent.subscribeAsync('component.update.casey.async.start',
 		}, 8000);*/
 		get(data.url).then(function(response) {
 	  		console.log("Success!", response);
+	  		let parsed = JSON.parse(response);
 	  		let event = {
 				channel: 'async',
 			    topic: 'component.update.casey.async.success',	    
 			    eventType: 'async.success',
-			    data: JSON.parse(response)
+			    data: {
+			    	name: 'casey weber mccarty',
+			    	heading: parsed.heading,
+			    	chapters: parsed.chapterUrls,
+			    	showAsyncError: false,
+			    	asyncErrorMessage: '',	    	
+			    	showNestedComponent: true
+			    }
 			}
 
 			this._subscriptions['component.update.casey.async.success'] = {};
@@ -76,7 +97,14 @@ caseyComponent.subscribeAsync('component.update.casey.async.start',
 				channel: 'async',
 			    topic: 'component.update.casey.async.error',	    
 			    eventType: 'async.error',
-			    data: error
+			    data: {
+			    	name: 'casey weber mccarty',
+			    	heading: '',
+			    	chapters: [],
+			    	showAsyncError: true,
+			    	asyncErrorMessage: error.message,
+			    	showNestedComponent: false
+			    }
 			}
 
 			this._subscriptions['component.update.casey.async.error'] = {};
@@ -109,20 +137,30 @@ let asyncEvent = {
     }
 }
 button.publish(asyncEvent);
-let events = caseyComponent.getEventStore().filter(jamesComponent.getSubscriptions());
-let reducedState = caseyComponent.replay(events);
-caseyComponent.render(reducedState);
 
 // some event occurs... a click event;
 let event = {
     channel: "sync",
     topic: "component.update.casey",      
     eventType: 'click',
-    data: 'casey'
+    data: {
+    	name: 'casey',
+    	heading: 'A story about something',
+    	chapters: [
+		    "chapter-1.json",
+		    "chapter-2.json",
+		    "chapter-3.json",
+		    "chapter-4.json",
+		    "chapter-5.json"
+	  	],
+    	showAsyncError: false,
+    	asyncErrorMessage: '',
+    	showNestedComponent: true
+    }
 }
 button.publish(event);
-events = caseyComponent.getEventStore().filter(caseyComponent.getSubscriptions());
-reducedState = caseyComponent.replay(events);
+let events = caseyComponent.getEventStore().filter(caseyComponent.getSubscriptions());
+let reducedState = caseyComponent.replay(events);
 caseyComponent.render(reducedState);
 
 event = {
@@ -149,7 +187,20 @@ setTimeout( () => {
 	    channel: "sync",
 	    topic: "component.update.casey",	    
 	    eventType: 'click',
-	    data: 'casey weber'
+	    data: {
+	    	name: 'casey weber',
+	    	heading: 'A story about something',
+	    	chapters: [
+			    "chapter-1.json",
+			    "chapter-2.json",
+			    "chapter-3.json",
+			    "chapter-4.json",
+			    "chapter-5.json"
+		  	],
+	    	showAsyncError: false,
+	    	asyncErrorMessage: '',
+	    	showNestedComponent: true
+	    }
 	}
 	button.publish(event);
 	let events = caseyComponent.getEventStore().filter(caseyComponent.getSubscriptions());
@@ -180,7 +231,20 @@ setTimeout( () => {
 	    channel: "sync",
 	    topic: "component.update.casey",	    
 	    eventType: 'click',
-	    data: 'casey weber mccarty'
+	    data: {
+	    	name: 'casey weber mccarty',
+	    	heading: 'A story about something',
+	    	chapters: [
+			    "chapter-1.json",
+			    "chapter-2.json",
+			    "chapter-3.json",
+			    "chapter-4.json",
+			    "chapter-5.json"
+		  	],
+	    	showAsyncError: false,
+	    	asyncErrorMessage: '',
+	    	showNestedComponent: true
+	    }
 	}
 	button.publish(event);
 	let events = caseyComponent.getEventStore().filter(caseyComponent.getSubscriptions())
@@ -216,9 +280,6 @@ setTimeout( () => {
 	    }
 	}
 	button.publish(asyncEvent);
-	let events = caseyComponent.getEventStore().filter(caseyComponent.getSubscriptions());
-	let reducedState = caseyComponent.replay(events);
-	caseyComponent.render(reducedState);
 }, 9000);
 
 setTimeout( () => {
@@ -231,7 +292,4 @@ setTimeout( () => {
         }
     }
     button.publish(asyncEvent);
-    let events = caseyComponent.getEventStore().filter(jamesComponent.getSubscriptions());
-    let reducedState = caseyComponent.replay(events);
-    caseyComponent.render(reducedState);
 }, 12000);
