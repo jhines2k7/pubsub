@@ -17,14 +17,20 @@ function view(state, component) {
 			return h('li', url);
 		});
 
-	let nested = new NestedComponent(document.createElement('div'), component._eventStore);	
+	let nested = new NestedComponent(document.createElement('div'), component._eventStore);
+	let nestedRender = nested.render();
+
+	/*if(component.shouldRenderNested) {
+		nestedRender = nested.render();
+		component.shouldRenderNested = false;
+	}*/
 	
 	return h('div', [
 		h('div', {style: {fontWeight: 'bold'}}, 'This is the casey component'),
 		h('div', {style: {fontWeight: 'bold', color: 'blue', fontSize: 'xx-large'}, props: {id: 'name'}}, state.name),
 		h('h1', {props: {id: 'heading'}}, `${state.heading}`),
 		h('ul', urlList),
-		state.showNestedComponent ? nested.render() : null,
+		state.showNestedComponent ? nestedRender : null,
 		h('h3', 
 			{style: {fontWeight: 'bold', color: 'red', fontSize: 'large'}}, 
 			state.showAsyncError ? `${state.asyncErrorMessage} -- simulated error` : ''
@@ -41,7 +47,8 @@ export default class CaseyComponent {
 	constructor(container, eventStore) {
 		this._eventStore = eventStore;		
 		this._container = container;
-		this._subscriptions = {};		
+		this._subscriptions = {};
+		this.shouldRenderNested = true;		
 	}
 
 	subscribe(channel, topic) {
