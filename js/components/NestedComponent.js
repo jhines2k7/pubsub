@@ -19,8 +19,7 @@ function updateDOM(container, newVnode) {
 }
 
 export default class NestedComponent {
-	constructor(container, eventStore) {
-		this._eventStore = eventStore;		
+	constructor(container) {
 		this._container = container;
 		this._subscriptions = {};
 	}

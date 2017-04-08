@@ -1,10 +1,10 @@
-import UserComponent from './components/UserComponent'
-import TabComponent from './components/TabComponent'
+//import TabComponent from './components/TabComponent'
 import CaseyComponent from './components/CaseyComponent'
 import JamesComponent from './components/JamesComponent'
 import ButtonComponent from './components/ButtonComponent'
 import get from './async.js'
 import EventStore from './EventStore'
+import NestedComponent from './components/NestedComponent'
 
 /*get('../story.json').then(function(response) {
   console.log("Success!", response);
@@ -51,6 +51,10 @@ let eventStore = new EventStore();
 
 let container = document.getElementById('casey');
 let caseyComponent = new CaseyComponent(container, eventStore);
+
+container = document.getElementById('james');
+let jamesComponent = new JamesComponent(container, eventStore);
+
 caseyComponent.subscribe('sync', 'component.update.casey');
 caseyComponent.subscribeAsync('component.update.casey.async.start', 
 	function(data, envelope) {
@@ -66,63 +70,62 @@ caseyComponent.subscribeAsync('component.update.casey.async.start',
 			this.publish(event);
 			this.render();
 		}, 8000);*/
-		get(data.url).then(function(response) {
-	  		console.log("Success!", response);
-	  		let parsed = JSON.parse(response);
+		get(data.url).then(
+		    function(response) {
+                console.log("Success!", response);
+                let parsed = JSON.parse(response);
 
-	  		let stateData = {
-	  			name: document.getElementById('name').innerText,
-	  			heading: parsed.heading,
-	  			chapters: parsed.chapterUrls,
-	  			showAsyncError: false,
-	  			asyncErrorMessage: '',
-	  			showNestedComponent: true
-	  		}
+                let stateData = {
+                    name: document.getElementById('name').innerText,
+                    heading: parsed.heading,
+                    chapters: parsed.chapterUrls,
+                    showAsyncError: false,
+                    asyncErrorMessage: '',
+                    showNestedComponent: true
+                };
 
-	  		let event = {
-				channel: 'async',
-			    topic: 'component.update.casey.async.success',	    
-			    eventType: 'async.success',
-			    data: stateData
-			}
+                let event = {
+                    channel: 'async',
+                    topic: 'component.update.casey.async.success',
+                    eventType: 'async.success',
+                    data: stateData
+                };
 
-			this._subscriptions['component.update.casey.async.success'] = {};
-			
-			this.publish(event);
-			let events = this._eventStore.filter(this._subscriptions);
-			let reducedState = this.replay(events);			
-			this.render(reducedState);  						
-		}.bind(this), 
-		function(error) {
-			console.error("Failed!", error);
+                this._subscriptions['component.update.casey.async.success'] = {};
 
-			let stateData = {
-	  			name: document.getElementById('name').innerText,
-	  			heading: '',
-	  			chapters: [],
-	  			showAsyncError: true,
-	  			asyncErrorMessage: error.message,
-	  			showNestedComponent: false
-	  		}
+                this.publish(event);
+                let events = this._eventStore.filter(this._subscriptions);
+                let reducedState = this.reduce(events);
+                this.render(reducedState);
+            }.bind(this),
+            function(error) {
+                console.error("Failed!", error);
 
-	  		let event = {
-				channel: 'async',
-			    topic: 'component.update.casey.async.error',	    
-			    eventType: 'async.error',
-			    data: stateData
-			}
+                let stateData = {
+                    name: document.getElementById('name').innerText,
+                    heading: '',
+                    chapters: [],
+                    showAsyncError: true,
+                    asyncErrorMessage: error.message,
+                    showNestedComponent: false
+                };
 
-			this._subscriptions['component.update.casey.async.error'] = {};
-			
-			this.publish(event);
-			let events = this._eventStore.filter(this._subscriptions);
-			let reducedState = this.replay(events);
-			this.render(reducedState);
-		}.bind(this));
+                let event = {
+                    channel: 'async',
+                    topic: 'component.update.casey.async.error',
+                    eventType: 'async.error',
+                    data: stateData
+                };
+
+                this._subscriptions['component.update.casey.async.error'] = {};
+
+                this.publish(event);
+                let events = this._eventStore.filter(this._subscriptions);
+                let reducedState = this.reduce(events);
+                this.render(reducedState);
+            }.bind(this));
     });
 
-container = document.getElementById('james');
-let jamesComponent = new JamesComponent(container, eventStore);
 jamesComponent.subscribe('sync', 'component.update.james');
 jamesComponent.subscribe('sync', 'component.update.casey');
 
@@ -134,14 +137,14 @@ tabComponent.subscribe('sync', 'profile.update.james');*/
 let button = new ButtonComponent(eventStore);
 
 //fire an async event
-let asyncEvent = {
+let asyncStartEvent = {
     channel: "async",
     topic: "component.update.casey.async.start",      
     data: {
       url: '../story.json'
     }
-}
-button.publish(asyncEvent);
+};
+button.publish(asyncStartEvent);
 
 // some event occurs... a click event;
 // values for heading and chapter are hardcoded...
@@ -165,18 +168,22 @@ let event = {
 		asyncErrorMessage: '',
 		showNestedComponent: true
 	}
-}
+};
 button.publish(event);
 let events = caseyComponent.getEventStore().filter(caseyComponent.getSubscriptions());
-let reducedState = caseyComponent.replay(events);
+let reducedState = caseyComponent.reduce(events);
 caseyComponent.render(reducedState);
+
+container = document.getElementById('nested');
+let nested = new NestedComponent(container);
+nested.render();
 
 event = {
     channel: "sync",
     topic: "component.update.james",	    
     eventType: 'click',
     data: 'james'
-}
+};
 button.publish(event);
 jamesComponent.render();
 
@@ -208,10 +215,10 @@ setTimeout( () => {
 			asyncErrorMessage: '',
 			showNestedComponent: true
 		}
-	}
+	};
 	button.publish(event);
 	let events = caseyComponent.getEventStore().filter(caseyComponent.getSubscriptions());
-	let reducedState = caseyComponent.replay(events);
+	let reducedState = caseyComponent.reduce(events);
 	caseyComponent.render(reducedState);
 
 	event = {
@@ -219,7 +226,7 @@ setTimeout( () => {
 	    topic: "component.update.james",	    
 	    eventType: 'click',
 	    data: 'james hines'
-	}
+	};
 	button.publish(event);
 	jamesComponent.render();
 
@@ -251,10 +258,10 @@ setTimeout( () => {
 			asyncErrorMessage: '',
 			showNestedComponent: true
 		}
-	}
+	};
 	button.publish(event);
-	let events = caseyComponent.getEventStore().filter(caseyComponent.getSubscriptions())
-	let reducedState = caseyComponent.replay(events);
+	let events = caseyComponent.getEventStore().filter(caseyComponent.getSubscriptions());
+	let reducedState = caseyComponent.reduce(events);
 	caseyComponent.render(reducedState);
 
 	event = {
@@ -262,7 +269,7 @@ setTimeout( () => {
 	    topic: "component.update.james",	    
 	    eventType: 'click',
 	    data: 'james orlando hines'
-	}
+	};
 	button.publish(event);
 	jamesComponent.render();
 
@@ -320,10 +327,10 @@ setTimeout( () => {
 			asyncErrorMessage: '',
 			showNestedComponent: true
 		}
-	}
+	};
 	button.publish(event);
-	let events = caseyComponent.getEventStore().filter(caseyComponent.getSubscriptions())
-	let reducedState = caseyComponent.replay(events);
+	let events = caseyComponent.getEventStore().filter(caseyComponent.getSubscriptions());
+	let reducedState = caseyComponent.reduce(events);
 	caseyComponent.render(reducedState);
 }, 15000);
 
@@ -352,6 +359,6 @@ setTimeout( () => {
 	}
 	button.publish(event);
 	let events = caseyComponent.getEventStore().filter(caseyComponent.getSubscriptions())
-	let reducedState = caseyComponent.replay(events);
+	let reducedState = caseyComponent.reduce(events);
 	caseyComponent.render(reducedState);
 }, 18000);

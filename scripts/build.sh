@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # clean the build directory
 if [ -d "build" ]; then
   rm build/*

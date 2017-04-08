@@ -9,7 +9,6 @@ let patch = snabbdom.init([ // Init patch function with chosen modules
 let h = require('snabbdom/h').default; // helper function for creating vnodes
 
 import postal from 'postal/lib/postal.lodash'
-import NestedComponent from './NestedComponent'
 
 // takes in the reduced component state and returns a vnode
 function view(state, component) {
@@ -17,8 +16,8 @@ function view(state, component) {
 			return h('li', url);
 		});
 
-	let nested = new NestedComponent(document.createElement('div'), component._eventStore);
-	let nestedRender = nested.render();
+	//let nested = new NestedComponent(document.createElement('div'), component._eventStore);
+	//let nestedRender = nested.render();
 
 	/*if(component.shouldRenderNested) {
 		nestedRender = nested.render();
@@ -30,7 +29,8 @@ function view(state, component) {
 		h('div', {style: {fontWeight: 'bold', color: 'blue', fontSize: 'xx-large'}, props: {id: 'name'}}, state.name),
 		h('h1', {props: {id: 'heading'}}, `${state.heading}`),
 		h('ul', urlList),
-		state.showNestedComponent ? nestedRender : null,
+		h('div', { props: {id: 'nested'}}),
+		//state.showNestedComponent ? nestedRender : null,
 		h('h3', 
 			{style: {fontWeight: 'bold', color: 'red', fontSize: 'large'}}, 
 			state.showAsyncError ? `${state.asyncErrorMessage} -- simulated error` : ''
@@ -58,7 +58,7 @@ export default class CaseyComponent {
 		    callback: function(data, envelope) {
 		    	/*let events = this._eventStore.filter(this._subscriptions);
 
-				let reducedState = this.replay(events);
+				let reducedState = this.reduce(events);
 
 		    	this.render(reducedState);*/
 		    }.bind(this)
@@ -99,7 +99,7 @@ export default class CaseyComponent {
 		return this._container;
 	}
 
-	replay(events) {
+	reduce(events) {
 		return events.reduce(function(state, event) {
 			state.name = event.data.name;
 			state.heading = event.data.heading;
