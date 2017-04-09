@@ -10,33 +10,6 @@ let h = require('snabbdom/h').default; // helper function for creating vnodes
 
 import postal from 'postal/lib/postal.lodash'
 
-function isEventForComponent(subscriptions) {
-	return (event) => {
-		//return event.topic === topic && event.componentName === componentName;
-		return subscriptions.hasOwnProperty(event.topic);
-	}			
-}
-
-function replay(events) {
-	//let reversed = events.reverse();
-
-	return events.reduce(function(state, event) {
-		/*state.userName = event.payload.userName;
-		state.firstName = event.payload.firstName;
-		state.lastName = event.payload.lastName;
-		state.email = event.payload.email;*/
-		if(event.topic === 'component.update.casey') {
-			state.caseyData = event.data;
-		}
-
-		if(event.topic === 'component.update.james') {
-			state.jamesData = event.data;
-		}	
-		
-		return state;
-	}, {}); 	
-}
-
 // takes in the reduced component state and returns a vnode
 function view(state) {
 
@@ -66,9 +39,9 @@ function updateDOM(container, newVnode) {
 
 export default class JamesComponent {
 	constructor(container, eventStore) {
-		this._eventStore = eventStore;		
-		this._container = container;
-		this._subscriptions = {};
+		this.eventStore = eventStore;
+		this.container = container;
+		this.subscriptions = {};
 	}
 
 	subscribe(channel, topic) {
@@ -76,25 +49,44 @@ export default class JamesComponent {
 		    channel: channel,
 		    topic: topic,
 		    callback: function(data, envelope) {
-		    	this.render();
+                let events = this.eventStore.filter(this.subscriptions);
+
+                let reducedState = this.reduce(events);
+
+                this.render(reducedState);
 		    }.bind(this)
 		});
 
-		this._subscriptions[topic] = subscription
+		this.subscriptions[topic] = subscription
 
 		return subscription;
 	}
 
 	getSubscriptions() {
-		return this._subscriptions;
+		return this.subscriptions;
 	}
 
-	render() {
-		let events = this._eventStore.filter(this._subscriptions);
+	render(state) {
+        const newVnode = view(state);
+		this.container = updateDOM(this.container, newVnode);
 
-		let reducedState = replay(events);
-
-        const newVnode = view(reducedState);
-		this._container = updateDOM(this._container, newVnode);
+		return this.container;
 	}
+
+    reduce(events) {
+        return events.reduce(function(state, event) {
+			if(event.topic === 'component.update.casey') {
+                state.caseyData = event.data;
+            }
+
+            if(event.topic === 'component.update.james') {
+                state.jamesData = event.data;
+            }
+
+            return state;
+        }, {
+        	jamesData: '',
+			caseyData: {}
+		});
+    }
 }

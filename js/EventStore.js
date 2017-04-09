@@ -1,3 +1,5 @@
+import postal from 'postal/lib/postal.lodash'
+
 export default class EventStore {
 	constructor() {
 		this.events = [];
@@ -10,7 +12,8 @@ export default class EventStore {
 
 	add(event) {
 		this.events.push(event);
-	}
+        postal.publish(event);
+    }
 }
 
 function isEventForComponent(subscriptions) {

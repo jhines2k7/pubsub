@@ -45,10 +45,9 @@ function updateDOM(container, newVnode) {
 
 export default class CaseyComponent {
 	constructor(container, eventStore) {
-		this._eventStore = eventStore;		
-		this._container = container;
-		this._subscriptions = {};
-		this.shouldRenderNested = true;		
+		this.eventStore = eventStore;
+		this.container = container;
+		this.subscriptions = {};
 	}
 
 	subscribe(channel, topic) {
@@ -56,15 +55,15 @@ export default class CaseyComponent {
 		    channel: channel,
 		    topic: topic,
 		    callback: function(data, envelope) {
-		    	/*let events = this._eventStore.filter(this._subscriptions);
+		    	let events = this.eventStore.filter(this.subscriptions);
 
 				let reducedState = this.reduce(events);
 
-		    	this.render(reducedState);*/
+		    	this.render(reducedState);
 		    }.bind(this)
 		});
 
-		this._subscriptions[topic] = subscription;		
+		this.subscriptions[topic] = subscription;
 		
 		return subscription;
 	}
@@ -76,27 +75,26 @@ export default class CaseyComponent {
 			callback: callback.bind(this)    		    
 		});
 
-		this._subscriptions[topic] = asyncSubscription;		
+		this.subscriptions[topic] = asyncSubscription;
 	}
 
 	publish(event) {
-		postal.publish(event);
-		this._eventStore.add(event);
+		this.eventStore.add(event);
 	}
 
 	getSubscriptions() {
-		return this._subscriptions;
+		return this.subscriptions;
 	}
 
 	getEventStore() {
-		return this._eventStore;
+		return this.eventStore;
 	}
 
 	render(state) {		
         const newVnode = view(state, this);
-		this._container = updateDOM(this._container, newVnode);
+		this.container = updateDOM(this.container, newVnode);
 
-		return this._container;
+		return this.container;
 	}
 
 	reduce(events) {
@@ -111,6 +109,13 @@ export default class CaseyComponent {
 			state.showNestedComponent = event.data.showNestedComponent;
 
 			return state;
-		}, {}); 	
+		}, {
+		    name: '',
+            heading: '',
+            chapters: [],
+            showAsyncError: false,
+            asyncErrorMessage: '',
+            showNestedComponent: true
+        });
 	}
 }

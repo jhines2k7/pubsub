@@ -91,10 +91,10 @@ caseyComponent.subscribeAsync('component.update.casey.async.start',
                     data: stateData
                 };
 
-                this._subscriptions['component.update.casey.async.success'] = {};
+                this.subscriptions['component.update.casey.async.success'] = {};
 
                 this.publish(event);
-                let events = this._eventStore.filter(this._subscriptions);
+                let events = this.eventStore.filter(this.subscriptions);
                 let reducedState = this.reduce(events);
                 this.render(reducedState);
             }.bind(this),
@@ -117,10 +117,10 @@ caseyComponent.subscribeAsync('component.update.casey.async.start',
                     data: stateData
                 };
 
-                this._subscriptions['component.update.casey.async.error'] = {};
+                this.subscriptions['component.update.casey.async.error'] = {};
 
                 this.publish(event);
-                let events = this._eventStore.filter(this._subscriptions);
+                let events = this.eventStore.filter(this.subscriptions);
                 let reducedState = this.reduce(events);
                 this.render(reducedState);
             }.bind(this));
@@ -170,9 +170,9 @@ let event = {
 	}
 };
 button.publish(event);
-let events = caseyComponent.getEventStore().filter(caseyComponent.getSubscriptions());
-let reducedState = caseyComponent.reduce(events);
-caseyComponent.render(reducedState);
+//let events = caseyComponent.getEventStore().filter(caseyComponent.getSubscriptions());
+//let reducedState = caseyComponent.reduce(events);
+//caseyComponent.render(reducedState);
 
 container = document.getElementById('nested');
 let nested = new NestedComponent(container);
@@ -185,7 +185,7 @@ event = {
     data: 'james'
 };
 button.publish(event);
-jamesComponent.render();
+//jamesComponent.render();
 
 /*event = {
     channel: "sync",
@@ -228,7 +228,7 @@ setTimeout( () => {
 	    data: 'james hines'
 	};
 	button.publish(event);
-	jamesComponent.render();
+	//jamesComponent.render();
 
 	/*event = {
 	    channel: "sync",
@@ -271,7 +271,7 @@ setTimeout( () => {
 	    data: 'james orlando hines'
 	};
 	button.publish(event);
-	jamesComponent.render();
+	//jamesComponent.render();
 
 	/*event = {
 	    channel: "sync",
@@ -329,9 +329,9 @@ setTimeout( () => {
 		}
 	};
 	button.publish(event);
-	let events = caseyComponent.getEventStore().filter(caseyComponent.getSubscriptions());
+	/*let events = caseyComponent.getEventStore().filter(caseyComponent.getSubscriptions());
 	let reducedState = caseyComponent.reduce(events);
-	caseyComponent.render(reducedState);
+	caseyComponent.render(reducedState);*/
 }, 15000);
 
 // adds two items in the list of chapters
@@ -358,7 +358,7 @@ setTimeout( () => {
 		}
 	}
 	button.publish(event);
-	let events = caseyComponent.getEventStore().filter(caseyComponent.getSubscriptions())
+	/*let events = caseyComponent.getEventStore().filter(caseyComponent.getSubscriptions())
 	let reducedState = caseyComponent.reduce(events);
-	caseyComponent.render(reducedState);
+	caseyComponent.render(reducedState);*/
 }, 18000);
