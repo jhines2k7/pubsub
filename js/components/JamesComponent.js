@@ -22,13 +22,11 @@ function view(state) {
 				`${typeof state.jamesData === 'undefined' ? '' : state.jamesData}`
 			)
 		]),
-		h('div', [
-			'James component can subscribe to updates from casey component: ', 
-			
-			h('span', {style: {fontWeight: 'bold', color: 'red'}}, 
-				`${typeof state.caseyData === 'undefined' ? '' : state.caseyData}`
-			)
-		]),
+		h('div',
+            [
+			    'James component can subscribe to updates from casey component: ',
+			    h('span', {style: {fontWeight: 'bold', color: 'red'}}, state.caseyData.name)
+		    ]),
 		h('hr')	
 	]);
 }
@@ -76,7 +74,8 @@ export default class JamesComponent {
     reduce(events) {
         return events.reduce(function(state, event) {
 			if(event.topic === 'component.update.casey') {
-                state.caseyData = event.data;
+                state.caseyData.name = event.data.name;
+                state.caseyData.heading = event.data.heading;
             }
 
             if(event.topic === 'component.update.james') {
@@ -86,7 +85,10 @@ export default class JamesComponent {
             return state;
         }, {
         	jamesData: '',
-			caseyData: {}
+			caseyData: {
+        	    name: '',
+                heading: ''
+            }
 		});
     }
 }
