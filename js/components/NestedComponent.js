@@ -12,28 +12,14 @@ function view() {
 	return h('h1', 'Nested Component');
 }
 
-function updateDOM(container, newVnode) {
-	return patch(container, newVnode);
-}
-
 export default class NestedComponent {
 	constructor(container) {
 		this.container = container;
-		this.subscriptions = {};
-	}
-	
-	publish(event) {
-		this.eventStore.add(event);
-	}
-
-	getSubscriptions() {
-		return this.subscriptions;
 	}
 
 	render() {		
         const newVnode = view();
-		this.container = updateDOM(this.container, newVnode);
 
-		return this.container;
+		return patch(this.container, newVnode);
 	}
 }
