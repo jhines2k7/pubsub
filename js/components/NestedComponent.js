@@ -8,8 +8,6 @@ let patch = snabbdom.init([ // Init patch function with chosen modules
 
 let h = require('snabbdom/h').default; // helper function for creating vnodes
 
-import postal from 'postal/lib/postal.lodash'
-
 function view() {		
 	return h('h1', 'Nested Component');
 }
@@ -20,23 +18,22 @@ function updateDOM(container, newVnode) {
 
 export default class NestedComponent {
 	constructor(container) {
-		this._container = container;
-		this._subscriptions = {};
+		this.container = container;
+		this.subscriptions = {};
 	}
 	
 	publish(event) {
-		postal.publish(event);
-		this._eventStore.push(event);
+		this.eventStore.add(event);
 	}
 
 	getSubscriptions() {
-		return this._subscriptions;
+		return this.subscriptions;
 	}
 
 	render() {		
         const newVnode = view();
-		this._container = updateDOM(this._container, newVnode);
+		this.container = updateDOM(this.container, newVnode);
 
-		return this._container;
+		return this.container;
 	}
 }
