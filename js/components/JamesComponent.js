@@ -57,7 +57,7 @@ export default class JamesComponent {
 		    }.bind(this)
 		});
 
-		this.subscriptions[topic] = subscription
+		this.subscriptions[topic] = subscription;
 
 		return subscription;
 	}

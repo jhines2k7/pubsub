@@ -15,14 +15,6 @@ function view(state, component) {
 	let urlList = state.chapters.map(function(url){
 			return h('li', url);
 		});
-
-	//let nested = new NestedComponent(document.createElement('div'), component._eventStore);
-	//let nestedRender = nested.render();
-
-	/*if(component.shouldRenderNested) {
-		nestedRender = nested.render();
-		component.shouldRenderNested = false;
-	}*/
 	
 	return h('div', [
 		h('div', {style: {fontWeight: 'bold'}}, 'This is the casey component'),
@@ -30,8 +22,7 @@ function view(state, component) {
 		h('h1', {props: {id: 'heading'}}, `${state.heading}`),
 		h('ul', urlList),
 		h('div', { props: {id: 'nested'}}),
-		//state.showNestedComponent ? nestedRender : null,
-		h('h3', 
+		h('h3',
 			{style: {fontWeight: 'bold', color: 'red', fontSize: 'large'}}, 
 			state.showAsyncError ? `${state.asyncErrorMessage} -- simulated error` : ''
 		),
